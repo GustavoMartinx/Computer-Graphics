@@ -4,6 +4,7 @@ char mode = 't';
 GLfloat tetha = 0.0;
 GLfloat translateOffsetX = 0.0;
 GLfloat translateOffsetY = 0.0;
+GLfloat scale = 1;
 
 
 int init(void){
@@ -17,17 +18,21 @@ int init(void){
 void display(void) {
     glClear(GL_COLOR_BUFFER_BIT);         //desenha o fundo (limpa a janela)
     
-    // chama a função de translação aqui
-    glRotatef(tetha, 0, 0, 1);
+    glPushMatrix();
     glTranslatef(translateOffsetX, translateOffsetY, 0.0);
+    glTranslatef(5, 5, 0.0);
+    glScalef(scale, scale, 1);
+    glRotatef(tetha, 0.0, 0.0, 1);
+    glTranslatef(-5, -5, 0.0);
     glColor3f(0.0,0.0,1.0);               //altera o atributo de cor
     glBegin(GL_QUADS);                    //desenha um quadrado
-        glVertex2i(0,0);
-        glVertex2i(0,10);
-        glVertex2i(10,10);
-        glVertex2i(10,0);
+        glVertex2i(0, 0);
+        glVertex2i(0, 10);
+        glVertex2i(10, 10);
+        glVertex2i(10, 0);
     glEnd();
 
+    glPopMatrix();
     glFlush();                            //desenha os comandos não executados
 }
 
@@ -56,29 +61,32 @@ void TeclasEspeciais(int key, int x, int y) {
     if(mode == 't') {
 
         if(key == GLUT_KEY_UP) {
-            translateOffsetY += (GLfloat)1.0;
-            // glMatrixMode(GL_PROJECTION);
+            translateOffsetY += 2.0;
         }
         if(key == GLUT_KEY_DOWN) {
-            translateOffsetY -= (GLfloat)1.0;
-            // glMatrixMode(GL_PROJECTION);
+            translateOffsetY -= 2.0;
         }
         if(key == GLUT_KEY_RIGHT) {
-            translateOffsetX += (GLfloat)1.0;
-            // glMatrixMode(GL_PROJECTION);
+            translateOffsetX += 2.0;
         }
         if(key == GLUT_KEY_LEFT) {
-            translateOffsetX -= (GLfloat)1.0;
-            // glMatrixMode(GL_PROJECTION);
+            translateOffsetX -= 2.0;
         }
     } else if(mode == 'r') {
+
         if(key == GLUT_KEY_RIGHT) {
-            tetha -= 5.0;
-            // glMatrixMode(GL_PROJECTION);
+            tetha += 1.0;
         }
         if(key == GLUT_KEY_LEFT) {
-            tetha += 5.0;
-            // glMatrixMode(GL_PROJECTION);
+            tetha -= 1.0;
+        }
+    } else if(mode == 's') {
+
+        if(key == GLUT_KEY_RIGHT) {
+            scale += 1.0;
+        }
+        if(key == GLUT_KEY_LEFT) {
+            scale -= 1.0;
         }
     }
     glutPostRedisplay();
