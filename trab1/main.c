@@ -2,8 +2,8 @@
 
 char mode = 't';
 GLfloat tetha = 0.0;
-GLfloat translateOffsetX = 0.0;
-GLfloat translateOffsetY = 0.0;
+GLfloat translateOffsetX = 5.0;
+GLfloat translateOffsetY = 5.0;
 GLfloat scale = 1;
 
 
@@ -11,7 +11,7 @@ int init(void){
     glClearColor(0.0, 0.0, 0.0, 0.0);     //define a cor de fundo
 
     glMatrixMode(GL_PROJECTION);          //carrega a matriz de projeção
-    gluOrtho2D(0.0,200.0,0.0,150.0);      //define projeção ortogonal 2D
+    gluOrtho2D(0.0,100.0,0.0,100.0);      //define projeção ortogonal 2D
 
 }
 
@@ -20,16 +20,14 @@ void display(void) {
     
     glPushMatrix();
     glTranslatef(translateOffsetX, translateOffsetY, 0.0);
-    glTranslatef(5, 5, 0.0);
     glScalef(scale, scale, 1);
     glRotatef(tetha, 0.0, 0.0, 1);
-    glTranslatef(-5, -5, 0.0);
     glColor3f(0.0,0.0,1.0);               //altera o atributo de cor
     glBegin(GL_QUADS);                    //desenha um quadrado
-        glVertex2i(0, 0);
-        glVertex2i(0, 10);
-        glVertex2i(10, 10);
-        glVertex2i(10, 0);
+        glVertex2i(-5,-5);
+        glVertex2i(-5, 5);
+        glVertex2i(5, 5);
+        glVertex2i(5, -5);
     glEnd();
 
     glPopMatrix();
@@ -63,13 +61,13 @@ void TeclasEspeciais(int key, int x, int y) {
         if(key == GLUT_KEY_UP) {
             translateOffsetY += 2.0;
         }
-        if(key == GLUT_KEY_DOWN) {
+        else if(key == GLUT_KEY_DOWN) {
             translateOffsetY -= 2.0;
         }
-        if(key == GLUT_KEY_RIGHT) {
+        else if(key == GLUT_KEY_RIGHT) {
             translateOffsetX += 2.0;
         }
-        if(key == GLUT_KEY_LEFT) {
+        else if(key == GLUT_KEY_LEFT) {
             translateOffsetX -= 2.0;
         }
     } else if(mode == 'r') {
@@ -77,17 +75,18 @@ void TeclasEspeciais(int key, int x, int y) {
         if(key == GLUT_KEY_RIGHT) {
             tetha += 1.0;
         }
-        if(key == GLUT_KEY_LEFT) {
+        else if(key == GLUT_KEY_LEFT) {
             tetha -= 1.0;
         }
     } else if(mode == 's') {
 
-        if(key == GLUT_KEY_RIGHT) {
-            scale += 1.0;
+        if(key == GLUT_KEY_UP) {
+            scale += 1;
         }
-        if(key == GLUT_KEY_LEFT) {
-            scale -= 1.0;
+        else if(key == GLUT_KEY_DOWN) {
+            scale -= 1;
         }
+        if(scale < 0) scale = 0.1
     }
     glutPostRedisplay();
 }
@@ -96,9 +95,9 @@ int main(int argc, char** argv) {
 
     glutInit(&argc,argv);                                     //inicializa o GLUT
     glutInitDisplayMode(GLUT_SINGLE| GLUT_RGB);               //configura o modo de display
-    glutInitWindowSize(400,300);                              //configura a largura e altura da janela de exibição
-    glutInitWindowPosition(5,310);
-    glutCreateWindow("Um programa OpenGL Exemplo");           //cria a janela de exibição
+    glutInitWindowSize(500,500);                              //configura a largura e altura da janela de exibição
+    glutInitWindowPosition(100,310);
+    glutCreateWindow("Atividade Prática 1");           //cria a janela de exibição
     glutSpecialFunc(TeclasEspeciais);
     glutKeyboardFunc(GerenciaTeclado);
     
