@@ -8,7 +8,7 @@ GLfloat scale = 1;
 
 
 int init(void){
-    glClearColor(0.0, 0.0, 0.0, 0.0);     //define a cor de fundo
+    glClearColor(1.0, 1.0, 1.0, 0.0);     //define a cor de fundo
 
     glMatrixMode(GL_PROJECTION);          //carrega a matriz de projeção
     gluOrtho2D(0.0,100.0,0.0,100.0);      //define projeção ortogonal 2D
@@ -22,7 +22,7 @@ void display(void) {
     glTranslatef(translateOffsetX, translateOffsetY, 0.0);
     glScalef(scale, scale, 1);
     glRotatef(tetha, 0.0, 0.0, 1);
-    glColor3f(0.0,0.0,1.0);               //altera o atributo de cor
+    glColor3f(1.0,0.0,0.0);               //altera o atributo de cor
     glBegin(GL_QUADS);                    //desenha um quadrado
         glVertex2i(-5,-5);
         glVertex2i(-5, 5);
