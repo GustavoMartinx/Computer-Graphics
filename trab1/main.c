@@ -86,7 +86,7 @@ void TeclasEspeciais(int key, int x, int y) {
         else if(key == GLUT_KEY_DOWN) {
             scale -= 1;
         }
-        if(scale < 0) scale = 0.1
+        if(scale < 0) scale = 0.1;
     }
     glutPostRedisplay();
 }
