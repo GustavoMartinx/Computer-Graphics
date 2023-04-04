@@ -73,20 +73,20 @@ void TeclasEspeciais(int key, int x, int y) {
     } else if(mode == 'r') {
 
         if(key == GLUT_KEY_RIGHT) {
-            tetha += 1.0;
+            tetha -= 1.0;
         }
         else if(key == GLUT_KEY_LEFT) {
-            tetha -= 1.0;
+            tetha += 1.0;
         }
     } else if(mode == 's') {
 
         if(key == GLUT_KEY_UP) {
-            scale += 1;
+            scale += 0.2 * scale;
         }
         else if(key == GLUT_KEY_DOWN) {
-            scale -= 1;
+            scale -= 0.2 * scale ;
         }
-        if(scale < 0) scale = 0.1;
+        if(scale < 0.1) scale = 0.1;
     }
     glutPostRedisplay();
 }
@@ -97,7 +97,7 @@ int main(int argc, char** argv) {
     glutInitDisplayMode(GLUT_SINGLE| GLUT_RGB);               //configura o modo de display
     glutInitWindowSize(500,500);                              //configura a largura e altura da janela de exibição
     glutInitWindowPosition(100,310);
-    glutCreateWindow("Atividade Prática 1");           //cria a janela de exibição
+    glutCreateWindow("Atividade Pratica 1");           //cria a janela de exibição
     glutSpecialFunc(TeclasEspeciais);
     glutKeyboardFunc(GerenciaTeclado);
     
