@@ -6,72 +6,91 @@
 
 static int width;
 static int height;
+volatile float spin;
 
-static void display(void) {
+void Timer(int value){
+    spin += 1.0f;
+
+    glutPostRedisplay();
+    glutTimerFunc(20,Timer, 1);
+}
+
+static void display(void)
+{
     glClear(GL_COLOR_BUFFER_BIT);
     glColor3f(1.0f, 0.0f, 0.0f);
 
-
-
-    // GPETO
-    
-    glViewport(0, 0, width/2, height/2); // Esquerda baixo
+    glViewport(0, 0, width / 2, height / 2); // Esquerda baixo
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(-3.0, 3.0, -3.0, 3.0,
             1, 50); // distancia da camera pro plano near, e pro far
-    
+
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     gluLookAt(0.0, 0.0, 2.5,  // x, y, z -  posição da câmera
               0.0, 0.0, 0.0,  // x, y, z -  pra onde a câmera aponta
               0.0, 1.0, 0.0); // x, y, z -  vetor view up
-    
+
     glPushMatrix();
+    glutWireTeapot(2);
+    glPopMatrix();
+
+    glViewport(width / 2, 0, width / 2, height / 2); // Direta baixo
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluPerspective(70, 1,
+                   1, 50); // distancia da camera pro plano near, e pro far
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+    gluLookAt(0.0, 0.0, 2.5,  // x, y, z -  posição da câmera
+              0.0, 0.0, 0.0,  // x, y, z -  pra onde a câmera aponta
+              0.0, 1.0, 0.0); // x, y, z -  vetor view up
+
+    glPushMatrix();
+    glRotatef(spin, 0, 0, 1);
+    glRotatef(45, 1, 0, 0);
     glutWireTeapot(1);
     glPopMatrix();
 
-    // END GPETO
-    
-
-    glViewport(width/2, 0, width/2, height/2); // Direta baixo
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-    gluLookAt(0.0, 0.0, 2.5,
-              0.0, 0.0, 0.0,
-              0.0, 1.0, 0.0);
-    glutWireTeapot(1);
+    glViewport(0, height / 2, width / 2, height / 2); // Esquerda cima
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-3.0, 3.0, -3.0, 3.0, 
-            1, 50);
+    glOrtho(-3.0, 3.0, -3.0, 3.0,
+            1, 50); // distancia da camera pro plano near, e pro far
 
-    glViewport(0, height/2, width/2, height/2); // Esquerda cima
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 2.5, 0.0,
-              0.0, 0.0, 0.0,
-              0.0, 0.0, -1.0);
-    glutWireTeapot(1);
+    gluLookAt(0.0, 2.5, 0.0,   // x, y, z -  posição da câmera
+              0.0, 0.0, 0.0,   // x, y, z -  pra onde a câmera aponta
+              0.0, 0.0, -1.0); // x, y, z -  vetor view up
+
+    glPushMatrix();
+    glutWireTeapot(2);
+    glPopMatrix();
+
+    glViewport(width / 2, height / 2, width / 2, height / 2); // Direita cima
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-3.0, 3.0, -3.0, 3.0, 1, 50);
+    glOrtho(-3.0, 3.0, -3.0, 3.0,
+            1, 50); // distancia da camera pro plano near, e pro far
 
-    glViewport(width/2, height/2, width/2, height/2); // Direita cima
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(2.5, 0.0, 0.0,
-              0.0, 0.0, 0.0,
-              0.0, 1.0, 0.0);
-    glutWireTeapot(1);
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glOrtho(-3.0, 3.0, -3.0, 3.0, 1, 50);
+    gluLookAt(-2.5, 0.0, 0.0, // x, y, z -  posição da câmera
+              0.0, 0.0, 0.0,  // x, y, z -  pra onde a câmera aponta
+              0.0, 1.0, 0.0); // x, y, z -  vetor view up
+
+    glPushMatrix();
+    glutWireTeapot(2);
+    glPopMatrix();
 
     glFlush();
 }
 
-static void reshape(int w, int h) {
+static void reshape(int w, int h)
+{
     width = w;
     height = h;
     glMatrixMode(GL_PROJECTION);
@@ -80,15 +99,19 @@ static void reshape(int w, int h) {
     glMatrixMode(GL_MODELVIEW);
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize(500, 500);
     glutInitWindowPosition(100, 100);
-    glutCreateWindow(argv[0]);
-    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glutCreateWindow("Bule - Quatro projecoes");
+    glClearColor(0, 0, 0, 0);
     glShadeModel(GL_FLAT);
     glutDisplayFunc(display);
+
+    glutTimerFunc(20, Timer, 1);
+
     glutReshapeFunc(reshape);
     glutMainLoop();
     return EXIT_SUCCESS;
