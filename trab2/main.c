@@ -28,7 +28,7 @@ static void display(void)
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 2.5,  // x, y, z -  posição da câmera
+    gluLookAt(0.0, 0.0, 4.5,  // x, y, z -  posição da câmera
               0.0, 0.0, 0.0,  // x, y, z -  pra onde a câmera aponta
               0.0, 1.0, 0.0); // x, y, z -  vetor view up
 
@@ -44,14 +44,14 @@ static void display(void)
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 0.0, 2.5,  // x, y, z -  posição da câmera
+    gluLookAt(0.0, 0.0, 4.5,  // x, y, z -  posição da câmera
               0.0, 0.0, 0.0,  // x, y, z -  pra onde a câmera aponta
               0.0, 1.0, 0.0); // x, y, z -  vetor view up
 
     glPushMatrix();
     glRotatef(spin, 0, 0, 1);
     glRotatef(45, 1, 0, 0);
-    glutWireTeapot(1);
+    glutWireTeapot(1.8);
     glPopMatrix();
 
     glViewport(0, height / 2, width / 2, height / 2); // Esquerda cima
@@ -62,7 +62,7 @@ static void display(void)
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(0.0, 2.5, 0.0,   // x, y, z -  posição da câmera
+    gluLookAt(0.0, 4.5, 0.0,   // x, y, z -  posição da câmera
               0.0, 0.0, 0.0,   // x, y, z -  pra onde a câmera aponta
               0.0, 0.0, -1.0); // x, y, z -  vetor view up
 
@@ -78,7 +78,7 @@ static void display(void)
 
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    gluLookAt(-2.5, 0.0, 0.0, // x, y, z -  posição da câmera
+    gluLookAt(-4.5, 0.0, 0.0, // x, y, z -  posição da câmera
               0.0, 0.0, 0.0,  // x, y, z -  pra onde a câmera aponta
               0.0, 1.0, 0.0); // x, y, z -  vetor view up
 
