@@ -103,14 +103,14 @@ int main(int argc, char **argv)
 {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB);
-    glutInitWindowSize(500, 500);
-    glutInitWindowPosition(100, 100);
+    glutInitWindowSize(800, 800);
+    glutInitWindowPosition(100, 0);
     glutCreateWindow("Bule - Quatro projecoes");
-    glClearColor(0, 0, 0, 0);
+    glClearColor(1, 1, 1, 1);
     glShadeModel(GL_FLAT);
     glutDisplayFunc(display);
 
-    glutTimerFunc(20, Timer, 1);
+    glutTimerFunc(0, Timer, 1);
 
     glutReshapeFunc(reshape);
     glutMainLoop();
