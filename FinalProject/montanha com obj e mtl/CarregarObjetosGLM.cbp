@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="CarregarObjetosGLM" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/CarregarObjetosGLM" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-lGL -lglut -lGLU -lGLEW" />
+				</Linker>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/CarregarObjetosGLM" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add option="-lGLU -lGL -lglut -lGLEW -lm" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="glm.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="glm.h" />
+		<Unit filename="glmdraw.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="main.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="util/glut_wrap.h" />
+		<Unit filename="util/readtex.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="util/readtex.h" />
+		<Unit filename="util/shaderutil.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="util/shaderutil.h" />
+		<Unit filename="util/trackball.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="util/trackball.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

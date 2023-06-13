@@ -1,0 +1,172 @@
+# depslib dependency file v1.0
+1524766291 source:/home/aretha/Documents/TesteGLM/glm.c
+	<math.h>
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<assert.h>
+	"glm.h"
+	"util/readtex.h"
+
+1404548254 /home/aretha/Documents/TesteGLM/glm.h
+
+1404548254 /home/aretha/Documents/TesteGLM/util/readtex.h
+	"gl_wrap.h"
+
+1404548254 /home/aretha/Documents/TesteGLM/util/gl_wrap.h
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1524766727 source:/home/aretha/Documents/TesteGLM/glmdraw.c
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"glm.h"
+	"util/readtex.h"
+	"util/shaderutil.h"
+
+1404548254 /home/aretha/Documents/TesteGLM/util/shaderutil.h
+
+1404548254 source:/home/aretha/Documents/TesteGLM/util/readtex.c
+	"gl_wrap.h"
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"readtex.h"
+
+1524766641 source:/home/aretha/Documents/TesteGLM/skybox.c
+	<assert.h>
+	<stdio.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"util/readtex.h"
+	"skybox.h"
+
+1404548254 /home/aretha/Documents/TesteGLM/skybox.h
+
+1404548254 source:/home/aretha/Documents/TesteGLM/util/shaderutil.c
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"glut_wrap.h"
+	"shaderutil.h"
+
+1404548254 /home/aretha/Documents/TesteGLM/util/glut_wrap.h
+	<GL/freeglut.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+
+1524769238 source:/home/aretha/Documents/TesteGLM/main.c
+	<math.h>
+	<stdlib.h>
+	<stdio.h>
+	<assert.h>
+	<stdarg.h>
+	<GL/glew.h>
+	"util/glut_wrap.h"
+	"glm.h"
+	"skybox.h"
+	"util/trackball.h"
+	"util/shaderutil.h"
+
+1404548254 /home/aretha/Documents/TesteGLM/util/trackball.h
+
+1404548254 source:/home/aretha/Documents/TesteGLM/util/trackball.c
+	<stdio.h>
+	<math.h>
+	"trackball.h"
+
+1524766291 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/glm.c
+	<math.h>
+	<stdio.h>
+	<string.h>
+	<stdlib.h>
+	<assert.h>
+	"glm.h"
+	"util/readtex.h"
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/glm.h
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/readtex.h
+	"gl_wrap.h"
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/gl_wrap.h
+	<OpenGL/gl.h>
+	<OpenGL/glu.h>
+	<GL/gl.h>
+	<GL/glu.h>
+
+1524766727 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/glmdraw.c
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"glm.h"
+	"util/readtex.h"
+	"util/shaderutil.h"
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/shaderutil.h
+
+1524766641 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/skybox.c
+	<assert.h>
+	<stdio.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"util/readtex.h"
+	"skybox.h"
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/skybox.h
+
+1404548254 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/readtex.c
+	"gl_wrap.h"
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	"readtex.h"
+
+1404548254 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/shaderutil.c
+	<assert.h>
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"glut_wrap.h"
+	"shaderutil.h"
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/glut_wrap.h
+	<GL/freeglut.h>
+	<GLUT/glut.h>
+	<GL/glut.h>
+
+1404548254 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/trackball.c
+	<stdio.h>
+	<math.h>
+	"trackball.h"
+
+1404548254 /home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/util/trackball.h
+
+1524793032 source:/home/aretha/Dropbox/UTFPR/Disciplinas/2018/1 semestre/BCC35F - Computacao Grafica/Projeto/TesteGLM/main.c
+	<math.h>
+	<stdlib.h>
+	<stdio.h>
+	<assert.h>
+	<stdarg.h>
+	<GL/glew.h>
+	"util/glut_wrap.h"
+	"glm.h"
+	"util/trackball.h"
+	"util/shaderutil.h"
+
