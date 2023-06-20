@@ -24,6 +24,9 @@ static char *Model_file = NULL;		/* nome do arquivo do objeto */
 static GLMmodel *Model;             /* modelo do objeto*/
 static GLfloat Scale = 4.0;			/* fator de escala */
 static GLint WinWidth = 1024, WinHeight = 768;
+GLMmodel ** Models;
+static GLfloat *Scales;
+int n_models = 0;
 
 typedef struct{
    // Variáveis para controles de rotação
@@ -45,10 +48,11 @@ static void InitViewInfo(ViewInfo *view){
    view->StartDistance = 0.0;
 }
 
-static void read_model(void) {
+static void read_model(char *Model_file) {
    float objScale;
 
    /* lendo o modelo */
+   n_models += 1;
    Model = glmReadOBJ(Model_file);
    objScale = glmUnitize(Model);
    glmFacetNormals(Model);
@@ -174,10 +178,15 @@ static void DoFeatureChecks(void){
 
 
 int main(int argc, char** argv) {
+   Models = calloc(5, sizeof(GLMmodel *));
+   Scales = calloc(5, sizeof(GLfloat));
    glutInit(&argc, argv);
    glutInitWindowSize(WinWidth, WinHeight);
 
-   Model_file = "untitled.obj";
+   // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm 
+   // ./app
+   static char * Model_file1 = "Moon2K.obj";
+   static char * Model_file2 = "bed.obj";
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("objview");
@@ -193,7 +202,8 @@ int main(int argc, char** argv) {
 
    InitViewInfo(&View);
 
-   read_model();
+   read_model(Model_file1);
+   read_model(Model_file2);
    init();
 
    glutMainLoop();

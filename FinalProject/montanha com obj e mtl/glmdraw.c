@@ -236,6 +236,8 @@ void glmMakeVBOs(GLMmodel *model){
 
 
 static void _glmLoadTexture(GLMmaterial *mat){
+   printf("É isso: ");
+   printf(mat->map_kd);
   if (mat->map_kd) {
      GLint imgWidth, imgHeight;
      GLenum imgFormat;
@@ -245,14 +247,13 @@ static void _glmLoadTexture(GLMmaterial *mat){
 
      image = LoadRGBImage( mat->map_kd, &imgWidth, &imgHeight, &imgFormat );
      if (!image) {
-        /*fprintf(stderr, "Couldn't open texture %s\n", mat->map_kd);*/
+        fprintf(stderr, "Couldn't open texture %s\n", mat->map_kd);
         free(mat->map_kd);
         mat->map_kd = NULL;
         mat->texture_kd = 0;
         return;
      }
-     if (0)
-        printf("load texture %s %d x %d\n", mat->map_kd, imgWidth, imgHeight);
+      printf("load texture %s %d x %d\n", mat->map_kd, imgWidth, imgHeight);
 
      glBindTexture(GL_TEXTURE_2D, mat->texture_kd);
      gluBuild2DMipmaps(GL_TEXTURE_2D, 3, imgWidth, imgHeight,
