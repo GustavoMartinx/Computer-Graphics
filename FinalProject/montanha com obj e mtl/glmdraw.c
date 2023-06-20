@@ -236,8 +236,9 @@ void glmMakeVBOs(GLMmodel *model){
 
 
 static void _glmLoadTexture(GLMmaterial *mat){
-   printf("É isso: ");
-   printf(mat->map_kd);
+   // printf("É isso: %s\n", mat->map_kd);
+   // fflush(stdout);
+   // TODO (Gui): se eu quiser tentar arrumar textura por aqui, é aqui que começa 
   if (mat->map_kd) {
      GLint imgWidth, imgHeight;
      GLenum imgFormat;
