@@ -405,9 +405,9 @@ static const char *TexFragmentShader =
 
 
 void glmShaderMaterial(GLMmaterial *mat){
-   static const float ambientLight[4] = { 0.1, 0.1, 0.1, 0.0 };
+   static const float ambientLight[4] = {  0.05f, 0.05f, 0.05f, 0.0f };
    static const float diffuseLight[4] = { 0.75, 0.75, 0.75, 1.0 };
-   static const float specularLight[4] = { 1.0, 1.0, 1.0, 0.0 };
+   static const float specularLight[4] = { 0.1f, 0.1f, 0.1f, 1.0f };
 
    if (!mat->prog) {
       /* make shader now */
