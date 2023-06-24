@@ -20,7 +20,7 @@ Observações:
 #include "util/shaderutil.h"
 bool keys[256];
 
-#include <SOIL/SOIL.h>
+//#include <SOIL/SOIL.h>
 
 static char *Model_file = NULL;		/* nome do arquivo do objeto */
 static GLMmodel *Model;             /* modelo do objeto*/
