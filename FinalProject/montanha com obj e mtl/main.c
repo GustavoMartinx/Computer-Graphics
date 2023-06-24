@@ -29,6 +29,10 @@ static GLfloat *PositionsX;
 static GLfloat *PositionsY;
 static GLfloat *PositionsZ;
 static GLfloat *Scales;
+static GLfloat LightPositionsX = 0;
+static GLfloat LightPositionsY = 0;
+static GLfloat LightPositionsZ = 21;
+
 int n_models = 0;
 
 GLdouble xPosCamera = 0, yPosCamera = 0, zPosCamera = 5;
@@ -56,16 +60,16 @@ static void InitViewInfo(ViewInfo *view){
    view->StartDistance = 0.0;
 }
 
-static void read_model(char *Model_file, GLfloat Scale) {
+static void read_model(char *Model_file, GLfloat Scale, GLfloat PosX, GLfloat PosY, GLfloat PosZ) {
    float objScale;
 
    /* lendo o modelo */
    Models[n_models] = glmReadOBJ(Model_file);
    Scales[n_models] = Scale;
    objScale = glmUnitize(Models[n_models]);
-   PositionsX[n_models] = 5 * n_models;
-   PositionsY[n_models] = 0;
-   PositionsZ[n_models] = 0;
+   PositionsX[n_models] = PosX;
+   PositionsY[n_models] = PosY;
+   PositionsZ[n_models] = PosZ;
    glmFacetNormals(Models[n_models]);
    if (Models[n_models]->numnormals == 0) {
       GLfloat smoothing_angle = 90.0;
@@ -83,6 +87,14 @@ static void init(void){
    glEnable(GL_DEPTH_TEST);
    glEnable(GL_CULL_FACE);
    glEnable(GL_NORMALIZE);
+   glCullFace(GL_BACK);
+   
+   glEnable(GL_LIGHTING);
+   GLfloat ambientColor[] = { 0.1f, 0.1f, 1.0f, 0.0f };
+   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor); 
+   // should be ambient light
+   // does not work on our models: ambient light is configured in
+   // glmdraw.c in line 408
 }
 
 
@@ -93,7 +105,7 @@ static void reshape(int width, int height) {
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   glFrustum(-ar, ar, -0.5, 0.5, 1.0, 300.0);
+   glFrustum(-ar, ar, -0.5, 0.5, 1.0, 500.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    glTranslatef(0.0, 0.0, -3.0);
@@ -107,7 +119,7 @@ static void display(void){
    gluLookAt(xPosCamera, yPosCamera, zPosCamera,
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
             xUpCamera, yUpCamera, zUpCamera);
-
+   
    for(int i = 0; i < n_models; i++)
    {
       glPushMatrix();
@@ -152,8 +164,8 @@ static void Mouse(int button, int state, int x, int y){
             if(!movendoCamera){
                ultimomouseX = x;
                ultimomouseY = y;
-               printf("x: %d, y: %d\n", x, y);
-               printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
+               // printf("x: %d, y: %d\n", x, y);
+               // printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
             }
             movendoCamera = GL_TRUE;
         } else if (state == GLUT_UP) {
@@ -164,31 +176,25 @@ static void Mouse(int button, int state, int x, int y){
 
 static void Keyboard(unsigned char key, int x, int y)
 {
+   if(key == 'p') // debug snapshot
+   {
+      printf("Debug Info:\n");
+      printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
+      printf("xPosCamera = %f, yPosCamera = %f, zPosCamera = %f\n", xPosCamera, yPosCamera, zPosCamera);
+   }
+   else if(key == 'l')
+   {
+      LightPositionsX = xPosCamera;
+      LightPositionsY = yPosCamera;
+      LightPositionsZ = zPosCamera;
+   }
+
    if (key < 256)
    {
       keys[key] = true; 
    }
-   printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y);
-   volatile char maior;
-   short int z_pos = 0;
-   short int x_pos = 0; // vendo se são positivos
-   if (xLookCamera > 0)
-   {
-      x_pos = 1;
-   }
-   if (zLookCamera > 0)
-   {
-      z_pos = 1;
-   }
-   if(fabs(xLookCamera) > fabs(zLookCamera))
-   {
-      maior = 'x';
-   }
-   else
-   {
-      maior = 'z';
-   }
-   printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
+   //printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y); 
+   // printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
    if (keys['w']) 
     {
       //move forward
@@ -212,17 +218,44 @@ static void Keyboard(unsigned char key, int x, int y)
       //move right
       xPosCamera = xPosCamera - zLookCamera;
       zPosCamera = zPosCamera + xLookCamera;
+    }
+    
+    // mover montanha
+    if (keys['i']) 
+    {
+      //move forward
+      PositionsX[3] = PositionsX[3] + 2 * xLookCamera;
+      PositionsZ[3] = PositionsZ[3] + 2 * zLookCamera;
     } 
-    if (key == ' ') {
+    if (keys['j']) 
+    {
+      //move left
+      PositionsX[3] = PositionsX[3] + 2 * zLookCamera;
+      PositionsZ[3] = PositionsZ[3] - 2 * xLookCamera;
+    } 
+    if (keys['k']) 
+    {
+      //move back
+      PositionsX[3] = PositionsX[3] - 2 * xLookCamera;
+      PositionsZ[3] = PositionsZ[3] - 2 * zLookCamera;
+    } 
+    if (keys['l']) 
+    {
+      //move right
+      PositionsX[3] = PositionsX[3] - 2 * zLookCamera;
+      PositionsZ[3] = PositionsZ[3] + 2 * xLookCamera;
+    }
+
+    if (keys[' ']) {
       yPosCamera = yPosCamera + 0.5;
-    } else if (key == 'q') {
+    } else if (keys['q']) {
       yPosCamera = yPosCamera - 0.5;
     }
     glutPostRedisplay();
 }
 
 void KeyboardUp(unsigned char key, int x, int y) {
-    keys[key] = false; // set the corresponding boolean value to false
+    keys[key] = false;
 }
 
 /**
@@ -252,30 +285,25 @@ static void Motion(int x, int y) {
          ultimomouseX = x;
          ultimomouseY = y;
       }
-      printf("x: %d, y: %d\n", x, y);
-      printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
+      //printf("x: %d, y: %d\n", x, y);
+      //printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
       GLdouble deltaX = -(x - ultimomouseX);
-      GLdouble deltaY = - (y - ultimomouseY);
-      // float LookLen = sqrt(xLookCamera*xLookCamera + zLookCamera*zLookCamera);
-
-      GLdouble angulo_de_mudanca = (deltaX * 36 * (M_PI / 180) * 0.01);
+      GLdouble deltaY = (y - ultimomouseY);
+      GLdouble deltaToRad = (36 * (M_PI / 180) * 0.01);
+      GLdouble angulo_de_mudanca = (deltaX * deltaToRad);
 
       zLookCamera = zLookCamera * cos(angulo_de_mudanca) - xLookCamera * sin(angulo_de_mudanca);
       xLookCamera = zLookCamera * sin(angulo_de_mudanca) + xLookCamera * cos(angulo_de_mudanca);
 
+      yLookCamera = yLookCamera * cos((deltaY * deltaToRad)) - 1 * sin((deltaY * deltaToRad)); 
       
-      yLookCamera = yLookCamera + (deltaY * 0.01);
-      if(yLookCamera > 1)
+      if(yLookCamera > 2)
       {
-         yLookCamera = 1;
+         yLookCamera = 2;
       }
-      if(yLookCamera < -1)
+      if(yLookCamera < -2)
       {
-         yLookCamera = -1;
-      }
-      if(xPosCamera || yPosCamera || zPosCamera)
-      {
-         // movimentar o y baseado na posição, mas mt trampo
+         yLookCamera = -2;
       }
 
       ultimomouseX = x;
@@ -327,6 +355,9 @@ int main(int argc, char** argv) {
    static char * Model_file1 = "Moon2K.obj";
    static char * Model_file2 = "bed.obj";
    static char * Model_file3 = "bobcat.obj";
+   static char * Model_file4 = "../obj-development/montanha.obj";
+   // vai crashar com menos de 4 objetos pq to movendo PositionsX[3] hardcoded antes
+   // se tirar objs tira isso ai tbm
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("objview");
@@ -344,9 +375,10 @@ int main(int argc, char** argv) {
 
    InitViewInfo(&View);
 
-   read_model(Model_file1, 0.5);
-   read_model(Model_file2, 3);
-   read_model(Model_file3, 3);
+   read_model(Model_file1, 0.5, 40, 90, 40);
+   read_model(Model_file2, 3, 5, 0, 0);
+   read_model(Model_file3, 3, 10, 0, 0);
+   read_model(Model_file4, 100, 40, 25, 40);
    init();
 
    glutMainLoop();
