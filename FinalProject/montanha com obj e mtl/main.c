@@ -20,6 +20,8 @@ Observações:
 #include "util/shaderutil.h"
 bool keys[256];
 
+#include <SOIL/SOIL.h>
+
 static char *Model_file = NULL;		/* nome do arquivo do objeto */
 static GLMmodel *Model;             /* modelo do objeto*/
 static GLfloat Scale = 4.0;			/* fator de escala */
