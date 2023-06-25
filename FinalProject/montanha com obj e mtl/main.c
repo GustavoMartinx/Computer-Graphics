@@ -21,6 +21,9 @@ Observações:
 bool keys[256];
 
 //#include <SOIL/SOIL.h>
+#include <GLFW/glfw3.h>
+// #include "glad.h"
+#include "stb_image.h"
 
 static char *Model_file = NULL;		/* nome do arquivo do objeto */
 static GLMmodel *Model;             /* modelo do objeto*/
@@ -132,6 +135,34 @@ static void display(void){
          glmDrawVBO(Models[i]);
       glPopMatrix();
    }
+
+   glEnable(GL_TEXTURE_2D);
+
+   GLuint textureID;
+   glGenTextures(1, &textureID);
+
+   glBindTexture(GL_TEXTURE_2D, textureID);
+
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+   int width, height, nrChannels;
+   unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
+
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+   
+   glBegin(GL_TRIANGLES);
+      glTexCoord2f(0.0f, 0.0f);
+      glVertex3f(0, 0, -2);
+
+      glTexCoord2f(1.0f, 0.0f);
+      glVertex3f(4, 0, -2);
+
+      glTexCoord2f(0.5f, 1.0f);
+      glVertex3f(2, 4, -2);
+   glEnd();
+   glDisable(GL_TEXTURE_2D);
+
    glutSwapBuffers();
 }
 
@@ -140,26 +171,26 @@ static void display(void){
  */
 #define SENS_ROT	5.0
 static void Mouse(int button, int state, int x, int y){
-    if (button == GLUT_LEFT_BUTTON) { //mouse - botão da esquera rotaciona o objeto
-        if (state == GLUT_DOWN) {
-            View.x_ini = x;
-            View.y_ini = y;
-            View.rotX_ini = View.rotX;
-            View.rotY_ini = View.rotY;
-            View.Rotating = GL_TRUE;
-        } else if (state == GLUT_UP) {
-            View.Rotating = GL_FALSE;
-        }
-    } else if (button == GLUT_MIDDLE_BUTTON) {  //mouse - botão do meio aproxima ou afasta o objeto (translação)
-        if (state == GLUT_DOWN) {
-            View.StartX = x;
-            View.StartY = y;
-            View.StartDistance = View.Distance;
-            View.Translating = GL_TRUE;
-        } else if (state == GLUT_UP) {
-            View.Translating = GL_FALSE;
-        }
-   }
+   //  if (button == GLUT_LEFT_BUTTON) { //mouse - botão da esquera rotaciona o objeto
+   //      if (state == GLUT_DOWN) {
+   //          View.x_ini = x;
+   //          View.y_ini = y;
+   //          View.rotX_ini = View.rotX;
+   //          View.rotY_ini = View.rotY;
+   //          View.Rotating = GL_TRUE;
+   //      } else if (state == GLUT_UP) {
+   //          View.Rotating = GL_FALSE;
+   //      }
+   //  } else if (button == GLUT_MIDDLE_BUTTON) {  //mouse - botão do meio aproxima ou afasta o objeto (translação)
+   //      if (state == GLUT_DOWN) {
+   //          View.StartX = x;
+   //          View.StartY = y;
+   //          View.StartDistance = View.Distance;
+   //          View.Translating = GL_TRUE;
+   //      } else if (state == GLUT_UP) {
+   //          View.Translating = GL_FALSE;
+   //      }
+   // }
    if (button == GLUT_RIGHT_BUTTON) { //mouse - botão da direita rotaciona a camera
         if (state == GLUT_DOWN) {
             
@@ -359,7 +390,7 @@ int main(int argc, char** argv) {
    static char * Model_file3 = "bobcat.obj";
    static char * Model_file4 = "../obj-development/montanha.obj";
    // vai crashar com menos de 4 objetos pq to movendo PositionsX[3] hardcoded antes
-   // se tirar objs tira isso ai tbm
+   // se tirar objs tira isso ai tbm 
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("objview");
