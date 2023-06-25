@@ -2,6 +2,7 @@ all:
 	gcc -o app main.c glad.o glm.c glmdraw.c stb_loader.c util/readtex.c util/shaderutil.c util/trackball.c shader.o -lGLU -lGL -lglut -lGLEW -lm -lglfw -lstdc++
 
 comp:
+	gcc -c glad.c -o glad.o
 	gcc -c glm.c -o glm.o
 	gcc -c glmdraw.c -o glmdraw.o
 	gcc -c stb_loader.c -o stb_loader.o
@@ -13,6 +14,7 @@ comp:
 	gcc -o app main.c glad.o glm.o glmdraw.o stb_loader.o readtex.o shader.o shaderutil.o trackball.o -lGLU -lGL -lglut -lGLEW -lm -lglfw -lstdc++
 
 del:
+	rm -rf glad.o
 	rm -rf glm.o
 	rm -rf glmdraw.o
 	rm -rf stb_loader.o

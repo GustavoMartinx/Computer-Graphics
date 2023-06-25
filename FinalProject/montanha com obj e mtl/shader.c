@@ -1,5 +1,6 @@
 #include "shader.h"
 #include "glad.h"
+#include <GLFW/glfw3.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,12 +11,39 @@ struct Shader
     unsigned int ID;
 };
 
+int hasExtension(const char* extension)
+{
+    const GLubyte* extensions = glGetString(GL_EXTENSIONS);
+    if (extensions != NULL)
+    {
+        const char* search = (const char*)extensions;
+        const char* match = strstr(search, extension);
+        while (match != NULL)
+        {
+            // Ensure the match is a complete word
+            const char* end = match + strlen(extension);
+            if ((match == search || *(match - 1) == ' ') && (*end == ' ' || *end == '\0'))
+            {
+                return 1; // Extension found
+            }
+            search = end;
+            match = strstr(search, extension);
+        }
+    }
+    return 0; // Extension not found
+}
+
 struct Shader *Shader_create(char *vertexPath, char *fragmentPath)
 {
+    printf("\nSHADER_CREATE\n");
+
     struct Shader *shader = (struct Shader *)malloc(sizeof(struct Shader));
 
     // Read vertex shader file
     FILE *vShaderFile = fopen(vertexPath, "r");
+
+    printf("\nvShaderFile: %p", vShaderFile);
+
     if (!vShaderFile)
     {
         printf("Failed to open vertex shader file: %s\n", vertexPath);
@@ -24,17 +52,27 @@ struct Shader *Shader_create(char *vertexPath, char *fragmentPath)
     }
 
     fseek(vShaderFile, 0, SEEK_END);
-    long vShaderFileSize = ftell(vShaderFile);
+
+    printf("\nvShaderFileSize: %ld", ftell(vShaderFile));
+
+    long int vShaderFileSize = ftell(vShaderFile);
+
     fseek(vShaderFile, 0, SEEK_SET);
 
     GLchar *vShaderCode = (GLchar *)malloc(vShaderFileSize + 1);
     fread(vShaderCode, vShaderFileSize, 1, vShaderFile);
     vShaderCode[vShaderFileSize] = '\0';
 
+    printf("\nvShaderCode:\n\n%s", vShaderCode);
+
     fclose(vShaderFile);
 
-    // Read fragment shader file
+    printf("\n");
+
     FILE *fShaderFile = fopen(fragmentPath, "r");
+
+    printf("\nfShaderFile: %p", vShaderFile);
+
     if (!fShaderFile)
     {
         printf("Failed to open fragment shader file: %s\n", fragmentPath);
@@ -44,34 +82,69 @@ struct Shader *Shader_create(char *vertexPath, char *fragmentPath)
     }
 
     fseek(fShaderFile, 0, SEEK_END);
-    long fShaderFileSize = ftell(fShaderFile);
+
+    printf("\nfShaderFileSize: %ld", ftell(fShaderFile));
+
+    long int fShaderFileSize = ftell(fShaderFile);
+
     fseek(fShaderFile, 0, SEEK_SET);
 
     GLchar *fShaderCode = (GLchar *)malloc(fShaderFileSize + 1);
     fread(fShaderCode, fShaderFileSize, 1, fShaderFile);
     fShaderCode[fShaderFileSize] = '\0';
 
+    printf("\nfShaderCode:\n\n%s", fShaderCode);
+
     fclose(fShaderFile);
 
-    // Compile shaders and create program
+    if (!gladLoadGL()) {
+        printf("Failed to initialize Glad\n");
+        return NULL;
+    }
+
     unsigned int vertex, fragment;
-    // vertex shader
+
     vertex = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertex, 1, (const GLchar**)&vShaderCode, NULL);
+
+    printf("Vertex shader object: %u\n", vertex);
+
+    glShaderSource(vertex, 1, (const GLchar **)&vShaderCode, NULL);
     glCompileShader(vertex);
 
-    // fragment Shader
+    if (hasExtension("GL_ARB_fragment_shader"))
+    {
+        printf("GL_ARB_fragment_shader extension is supported\n");
+    }
+    else
+    {
+        printf("GL_ARB_fragment_shader extension is not supported\n");
+    }
+
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragment, 1, (const GLchar**)&fShaderCode, NULL);
+    
+    GLint compileStatus;
+    glGetShaderiv(fragment, GL_COMPILE_STATUS, &compileStatus);
+    if (compileStatus == GL_FALSE)
+    {
+        GLint infoLogLength;
+        glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+        GLchar *infoLog = (GLchar *)malloc(infoLogLength * sizeof(GLchar));
+        glGetShaderInfoLog(fragment, infoLogLength, NULL, infoLog);
+
+        printf("fragment shader compilation failed:\n%s\n", infoLog);
+
+        free(infoLog);
+    }
+
+    glShaderSource(fragment, 1, (const GLchar **)&fShaderCode, NULL);
     glCompileShader(fragment);
 
-    // shader Program
     shader->ID = glCreateProgram();
     glAttachShader(shader->ID, vertex);
     glAttachShader(shader->ID, fragment);
     glLinkProgram(shader->ID);
 
-    // delete the shaders as they're linked into our program now and no longer necessary
     glDeleteShader(vertex);
     glDeleteShader(fragment);
 

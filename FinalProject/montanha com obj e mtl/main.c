@@ -23,16 +23,9 @@ bool keys[256];
 
 #include <GLFW/glfw3.h>
 #include "stb_image.h"
-
 #include "shader.h"
 
-// load and create a texture
-// -------------------------
 unsigned int texture1, texture2;
-
-// build and compile our shader zprogram
-// ------------------------------------
-
 Shader *ourShader;
 
 unsigned int VBO, VAO, EBO;
@@ -115,10 +108,6 @@ static void init(void)
    GLfloat ambientColor[] = {0.1f, 0.1f, 1.0f, 0.0f};
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
 
-   ////////////////////////////////////// TEXTURE ////////////////////////////////////////
-
-   // set up vertex data (and buffer(s)) and configure vertex attributes
-   // ------------------------------------------------------------------
    float vertices[] = {
        // positions          // colors           // texture coords
        0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right
@@ -198,6 +187,8 @@ static void init(void)
 
    ourShader = Shader_create("./texture.vs", "./texture.fs");
 
+   printf("\nourShader->ID: %d", Shader_getID(ourShader));
+
    // tell opengl for each sampler to which texture unit it belongs to (only has to be done once)
    // -------------------------------------------------------------------------------------------
    Shader_use(ourShader); // don't forget to activate/use the shader before setting uniforms!
@@ -205,8 +196,6 @@ static void init(void)
    glUniform1i(glGetUniformLocation(Shader_getID(ourShader), "texture1"), 0);
    // or set it via the texture class
    Shader_setInt(ourShader, "texture2", 1);
-
-   /////////////////////////////////////////////// TEXTURE /////////////////////////////////
 
    // should be ambient light
    // does not work on our models: ambient light is configured in
@@ -489,7 +478,6 @@ static void DoFeatureChecks(void)
 
 int main(int argc, char **argv)
 {
-
    Models = (GLMmodel **)calloc(10, sizeof(GLMmodel *));
    Scales = (GLfloat *)calloc(10, sizeof(GLfloat));
    PositionsX = (GLfloat *)calloc(10, sizeof(GLfloat));
@@ -511,6 +499,16 @@ int main(int argc, char **argv)
    glutCreateWindow("objview");
 
    glewInit();
+
+   const GLubyte *version = glGetString(GL_VERSION);
+   const GLubyte *renderer = glGetString(GL_RENDERER);
+   const GLubyte *vendor = glGetString(GL_VENDOR);
+   const GLubyte *glslVersion = glGetString(GL_SHADING_LANGUAGE_VERSION);
+
+   printf("OpenGL Version: %s\n", version);
+   printf("Renderer: %s\n", renderer);
+   printf("Vendor: %s\n", vendor);
+   printf("GLSL Version: %s\n", glslVersion);
 
    DoFeatureChecks();
 
