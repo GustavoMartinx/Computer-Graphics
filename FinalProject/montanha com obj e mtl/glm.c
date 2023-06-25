@@ -53,7 +53,7 @@ stralloc(const char *string)
 {
   char *copy;
 
-  copy = malloc(strlen(string) + 1);
+  copy = (char *)malloc(strlen(string) + 1);
   if (copy == NULL)
     return NULL;
   strcpy(copy, string);

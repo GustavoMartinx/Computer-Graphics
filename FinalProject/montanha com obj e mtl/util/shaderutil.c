@@ -81,7 +81,7 @@ ShadersSupported(void)
       fprintf(stderr, "Warning: Trying ARB GLSL instead of OpenGL 2.x.  This may not work.\n");
       CreateShader = glCreateShaderObjectARB;
       DeleteShader = glDeleteObjectARB;
-      ShaderSource = glShaderSourceARB;
+      ShaderSource = (PFNGLSHADERSOURCEPROC)glShaderSourceARB;
       GetShaderiv = glGetObjectParameterivARB;
       GetShaderInfoLog = glGetInfoLogARB;
       CreateProgram = glCreateProgramObjectARB;
