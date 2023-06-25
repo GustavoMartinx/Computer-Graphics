@@ -7,4 +7,4 @@
 
 ## Execução
 
-- `make'
+- `make`
