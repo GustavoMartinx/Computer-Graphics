@@ -174,50 +174,31 @@ static void Mouse(int button, int state, int x, int y){
    }
 }
 
-static void Keyboard(unsigned char key, int x, int y)
+void eventos()
 {
-   if(key == 'p') // debug snapshot
-   {
-      printf("Debug Info:\n");
-      printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
-      printf("xPosCamera = %f, yPosCamera = %f, zPosCamera = %f\n", xPosCamera, yPosCamera, zPosCamera);
-   }
-   else if(key == 'l')
-   {
-      LightPositionsX = xPosCamera;
-      LightPositionsY = yPosCamera;
-      LightPositionsZ = zPosCamera;
-   }
-
-   if (key < 256)
-   {
-      keys[key] = true; 
-   }
-   //printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y); 
-   // printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
    if (keys['w']) 
     {
       //move forward
-      xPosCamera = xPosCamera + xLookCamera;
-      zPosCamera = zPosCamera + zLookCamera;
+      xPosCamera = xPosCamera + 0.5 * xLookCamera;
+      zPosCamera = zPosCamera + 0.5 * zLookCamera;
     } 
     if (keys['a']) 
     {
       //move left
-      xPosCamera = xPosCamera + zLookCamera;
-      zPosCamera = zPosCamera - xLookCamera;
+      xPosCamera = xPosCamera + 0.5 * zLookCamera;
+      zPosCamera = zPosCamera - 0.5 * xLookCamera;
     } 
     if (keys['s']) 
     {
       //move back
-      xPosCamera = xPosCamera - xLookCamera;
-      zPosCamera = zPosCamera - zLookCamera;
+      xPosCamera = xPosCamera - 0.5 * xLookCamera;
+      zPosCamera = zPosCamera - 0.5 * zLookCamera;
     } 
     if (keys['d']) 
     {
       //move right
-      xPosCamera = xPosCamera - zLookCamera;
-      zPosCamera = zPosCamera + xLookCamera;
+      xPosCamera = xPosCamera - 0.5 * zLookCamera;
+      zPosCamera = zPosCamera + 0.5 * xLookCamera;
     }
     
     // mover montanha
@@ -251,6 +232,30 @@ static void Keyboard(unsigned char key, int x, int y)
     } else if (keys['q']) {
       yPosCamera = yPosCamera - 0.5;
     }
+    glutPostRedisplay();
+}
+
+static void Keyboard(unsigned char key, int x, int y)
+{
+   if(key == 'p') // debug snapshot
+   {
+      printf("Debug Info:\n");
+      printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
+      printf("xPosCamera = %f, yPosCamera = %f, zPosCamera = %f\n", xPosCamera, yPosCamera, zPosCamera);
+   }
+   else if(key == 'l')
+   {
+      LightPositionsX = xPosCamera;
+      LightPositionsY = yPosCamera;
+      LightPositionsZ = zPosCamera;
+   }
+
+   if (key < 256)
+   {
+      keys[key] = true; 
+   }
+   //printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y); 
+   // printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
     glutPostRedisplay();
 }
 
@@ -372,13 +377,14 @@ int main(int argc, char** argv) {
    glutKeyboardUpFunc(KeyboardUp);
    glutMouseFunc(Mouse);
    glutMotionFunc(Motion);
+   glutIdleFunc(eventos);
 
    InitViewInfo(&View);
 
    read_model(Model_file1, 0.5, 40, 90, 40);
    read_model(Model_file2, 3, 5, 0, 0);
    read_model(Model_file3, 3, 10, 0, 0);
-   read_model(Model_file4, 100, 40, 25, 40);
+   read_model(Model_file4, 2, 40, 25, 40);
    init();
 
    glutMainLoop();
