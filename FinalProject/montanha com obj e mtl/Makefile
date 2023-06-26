@@ -11,7 +11,7 @@ comp:
 	gcc -c util/trackball.c -o trackball.o
 	gcc -c shader.c -o shader.o
 
-	gcc -o app main.c glad.o glm.o glmdraw.o stb_loader.o readtex.o shader.o shaderutil.o trackball.o -lGLU -lGL -lglut -lGLEW -lm -lglfw -lstdc++
+	gcc -o app main.c glad.o glm.o glmdraw.o stb_loader.o readtex.o shader.o shaderutil.o trackball.o -lGLU -lGL -lglut -lGLEW -lSOIL -lm -lglfw -lstdc++
 
 del:
 	rm -rf glad.o
