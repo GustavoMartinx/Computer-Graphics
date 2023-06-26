@@ -1,4 +1,5 @@
 #include "shader.h"
+
 #include "glad.h"
 #include <GLFW/glfw3.h>
 
@@ -97,10 +98,17 @@ struct Shader *Shader_create(char *vertexPath, char *fragmentPath)
 
     fclose(fShaderFile);
 
-    if (!gladLoadGL()) {
-        printf("Failed to initialize Glad\n");
+    if (!gladLoadGL())
+    {
+        printf("\nDEU RUIM\n");
         return NULL;
     }
+
+    // if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    // {
+    //     printf("\nDEU RUIM\n");
+    //     return NULL;
+    // }
 
     unsigned int vertex, fragment;
 
@@ -121,24 +129,26 @@ struct Shader *Shader_create(char *vertexPath, char *fragmentPath)
     }
 
     fragment = glCreateShader(GL_FRAGMENT_SHADER);
-    
-    GLint compileStatus;
-    glGetShaderiv(fragment, GL_COMPILE_STATUS, &compileStatus);
-    if (compileStatus == GL_FALSE)
-    {
-        GLint infoLogLength;
-        glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &infoLogLength);
 
-        GLchar *infoLog = (GLchar *)malloc(infoLogLength * sizeof(GLchar));
-        glGetShaderInfoLog(fragment, infoLogLength, NULL, infoLog);
-
-        printf("fragment shader compilation failed:\n%s\n", infoLog);
-
-        free(infoLog);
-    }
+    printf("fragment shader object: %u\n", fragment);
 
     glShaderSource(fragment, 1, (const GLchar **)&fShaderCode, NULL);
     glCompileShader(fragment);
+
+    // GLint compileStatus;
+    // glGetShaderiv(fragment, GL_COMPILE_STATUS, &compileStatus);
+    // if (compileStatus == GL_FALSE)
+    // {
+    //     GLint infoLogLength;
+    //     glGetShaderiv(fragment, GL_INFO_LOG_LENGTH, &infoLogLength);
+
+    //     GLchar *infoLog = (GLchar *)malloc(infoLogLength * sizeof(GLchar));
+    //     glGetShaderInfoLog(fragment, infoLogLength, NULL, infoLog);
+
+    //     printf("fragment shader compilation failed:\n%s\n", infoLog);
+
+    //     free(infoLog);
+    // }
 
     shader->ID = glCreateProgram();
     glAttachShader(shader->ID, vertex);
@@ -151,31 +161,38 @@ struct Shader *Shader_create(char *vertexPath, char *fragmentPath)
     free(vShaderCode);
     free(fShaderCode);
 
+    printf("\nACABOU\n");
+
     return shader;
 }
 
 void Shader_use(struct Shader *shader)
 {
+    printf("\nSHADER_USE\n");
     glUseProgram(shader->ID);
 }
 
 void Shader_setBool(struct Shader *shader, char *name, int value)
 {
+    printf("\nSHADER_SETBOOL\n");
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
 }
 
 void Shader_setInt(struct Shader *shader, char *name, int value)
 {
+    printf("\nSHADER_INT\n");
     glUniform1i(glGetUniformLocation(shader->ID, name), value);
 }
 
 void Shader_setFloat(struct Shader *shader, char *name, float value)
 {
+    printf("\nSHADER_FLOAT\n");
     glUniform1f(glGetUniformLocation(shader->ID, name), value);
 }
 
 unsigned int Shader_getID(struct Shader *shader)
 {
+    printf("\nSHADER_ID\n");
     if (shader)
     {
         return shader->ID;
