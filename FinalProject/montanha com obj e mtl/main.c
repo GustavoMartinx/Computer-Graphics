@@ -248,25 +248,25 @@ void eventos()
          animacao_bola_de_neve_estagio3 = GL_FALSE;
       }
    }
-   if (keys['w'] ||keys['W']) 
+   if (keys['w'] ) 
     {
       //move forward
       xPosCamera = xPosCamera + 0.5 * xLookCamera;
       zPosCamera = zPosCamera + 0.5 * zLookCamera;
     } 
-    if (keys['a'] || keys['A']) 
+    if (keys['a']) 
     {
       //move left
       xPosCamera = xPosCamera + 0.5 * zLookCamera;
       zPosCamera = zPosCamera - 0.5 * xLookCamera;
     } 
-    if (keys['s'] || keys['S']) 
+    if (keys['s'] ) 
     {
       //move back
       xPosCamera = xPosCamera - 0.5 * xLookCamera;
       zPosCamera = zPosCamera - 0.5 * zLookCamera;
     } 
-    if (keys['d'] | keys['D']) 
+    if (keys['d'] ) 
     {
       //move right
       xPosCamera = xPosCamera - 0.5 * zLookCamera;
@@ -274,25 +274,25 @@ void eventos()
     }
     
     // mover montanha
-    if (keys['i'] | keys['I']) 
+    if (keys['i'] ) 
     {
       //move forward
       PositionsX[0] = PositionsX[0] + 2 * xLookCamera;
       PositionsZ[0] = PositionsZ[0] + 2 * zLookCamera;
     } 
-    if (keys['j']|| keys['J']) 
+    if (keys['j']) 
     {
       //move left
       PositionsX[0] = PositionsX[0] + 2 * zLookCamera;
       PositionsZ[0] = PositionsZ[0] - 2 * xLookCamera;
     } 
-    if (keys['k'] || keys['K']) 
+    if (keys['k'] ) 
     {
       //move back
       PositionsX[0] = PositionsX[0] - 2 * xLookCamera;
       PositionsZ[0] = PositionsZ[0] - 2 * zLookCamera;
     } 
-    if (keys['l'] || keys['L']) 
+    if (keys['l'] ) 
     {
       //move right
       PositionsX[0] = PositionsX[0] - 2 * zLookCamera;
