@@ -30,8 +30,8 @@ static GLfloat *PositionsY;
 static GLfloat *PositionsZ;
 static GLfloat *Scales;
 static GLfloat LightPositionsX = 0;
-static GLfloat LightPositionsY = 0;
-static GLfloat LightPositionsZ = 21;
+static GLfloat LightPositionsY = 10;
+static GLfloat LightPositionsZ = 100;
 
 int n_models = 0;
 
@@ -81,20 +81,31 @@ static void read_model(char *Model_file, GLfloat Scale, GLfloat PosX, GLfloat Po
    glmMakeVBOs(Models[n_models]);
    n_models += 1;
 }
-
 static void init(void){
-   glClearColor(1.0, 1.0, 1.0, 0.0);
+   glClearColor(0.2, 0.2, 0.4, 0.0);
    glEnable(GL_DEPTH_TEST);
    glEnable(GL_CULL_FACE);
    glEnable(GL_NORMALIZE);
    glCullFace(GL_BACK);
-   
+   glEnable(GL_COLOR_MATERIAL);
    glEnable(GL_LIGHTING);
-   GLfloat ambientColor[] = { 0.1f, 0.1f, 1.0f, 0.0f };
+   glEnable(GL_LIGHT0);
+   GLfloat luzAmbiente[4]={0.1,0.1,0.1,1.0};
+   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
+	GLfloat luzDifusa[4]={0.3,0.3,0.3,1.0};	  
+	GLfloat luzEspecular[4]={0.5, 0.5, 0.5, 1.0};
+   GLfloat posicoesLuz[4]={LightPositionsX, LightPositionsY, LightPositionsZ, 1.0};
+   glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
+	glLightfv(GL_LIGHT0, GL_POSITION, posicoesLuz);
+   GLfloat ambientColor[] = { 0.1f, 0.1f, 0.1f, 0.0f };
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor); 
-   // should be ambient light
-   // does not work on our models: ambient light is configured in
-   // glmdraw.c in line 408
+   glShadeModel(GL_SMOOTH);
+
+   GLint especMaterial =80;
+	// Define a concentra��o do brilho
+	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
 }
 
 
@@ -105,7 +116,7 @@ static void reshape(int width, int height) {
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   glFrustum(-ar, ar, -0.5, 0.5, 1.0, 500.0);
+   glFrustum(-ar, ar, -0.5, 0.5, 1.0, 600.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    glTranslatef(0.0, 0.0, -3.0);
@@ -120,6 +131,7 @@ static void display(void){
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
             xUpCamera, yUpCamera, zUpCamera);
    
+   GLfloat especularidade[4]={0.1,0.1,0.1,1.0};
    for(int i = 0; i < n_models; i++)
    {
       glPushMatrix();
@@ -176,25 +188,25 @@ static void Mouse(int button, int state, int x, int y){
 
 void eventos()
 {
-   if (keys['w']) 
+   if (keys['w'] ||keys['W']) 
     {
       //move forward
       xPosCamera = xPosCamera + 0.5 * xLookCamera;
       zPosCamera = zPosCamera + 0.5 * zLookCamera;
     } 
-    if (keys['a']) 
+    if (keys['a'] || keys['A']) 
     {
       //move left
       xPosCamera = xPosCamera + 0.5 * zLookCamera;
       zPosCamera = zPosCamera - 0.5 * xLookCamera;
     } 
-    if (keys['s']) 
+    if (keys['s'] || keys['S']) 
     {
       //move back
       xPosCamera = xPosCamera - 0.5 * xLookCamera;
       zPosCamera = zPosCamera - 0.5 * zLookCamera;
     } 
-    if (keys['d']) 
+    if (keys['d'] | keys['D']) 
     {
       //move right
       xPosCamera = xPosCamera - 0.5 * zLookCamera;
@@ -202,29 +214,29 @@ void eventos()
     }
     
     // mover montanha
-    if (keys['i']) 
+    if (keys['i'] | keys['I']) 
     {
       //move forward
-      PositionsX[3] = PositionsX[3] + 2 * xLookCamera;
-      PositionsZ[3] = PositionsZ[3] + 2 * zLookCamera;
+      PositionsX[0] = PositionsX[0] + 2 * xLookCamera;
+      PositionsZ[0] = PositionsZ[0] + 2 * zLookCamera;
     } 
-    if (keys['j']) 
+    if (keys['j']|| keys['J']) 
     {
       //move left
-      PositionsX[3] = PositionsX[3] + 2 * zLookCamera;
-      PositionsZ[3] = PositionsZ[3] - 2 * xLookCamera;
+      PositionsX[0] = PositionsX[0] + 2 * zLookCamera;
+      PositionsZ[0] = PositionsZ[0] - 2 * xLookCamera;
     } 
-    if (keys['k']) 
+    if (keys['k'] || keys['K']) 
     {
       //move back
-      PositionsX[3] = PositionsX[3] - 2 * xLookCamera;
-      PositionsZ[3] = PositionsZ[3] - 2 * zLookCamera;
+      PositionsX[0] = PositionsX[0] - 2 * xLookCamera;
+      PositionsZ[0] = PositionsZ[0] - 2 * zLookCamera;
     } 
-    if (keys['l']) 
+    if (keys['l'] || keys['L']) 
     {
       //move right
-      PositionsX[3] = PositionsX[3] - 2 * zLookCamera;
-      PositionsZ[3] = PositionsZ[3] + 2 * xLookCamera;
+      PositionsX[0] = PositionsX[0] - 2 * zLookCamera;
+      PositionsZ[0] = PositionsZ[0] + 2 * xLookCamera;
     }
 
     if (keys[' ']) {
@@ -237,17 +249,27 @@ void eventos()
 
 static void Keyboard(unsigned char key, int x, int y)
 {
-   if(key == 'p') // debug snapshot
+   if(key == 'p' || key == 'P') // debug snapshot
    {
       printf("Debug Info:\n");
       printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
       printf("xPosCamera = %f, yPosCamera = %f, zPosCamera = %f\n", xPosCamera, yPosCamera, zPosCamera);
    }
-   else if(key == 'l')
+   else if(key == 'o' || key == 'O')
    {
       LightPositionsX = xPosCamera;
       LightPositionsY = yPosCamera;
       LightPositionsZ = zPosCamera;
+   }
+   else if(key == 'y' || key == 'Y')
+   {
+      GLfloat posicoesLuz[4]={LightPositionsX, LightPositionsY, LightPositionsZ, 1.0};
+      glLightfv(GL_LIGHT0, GL_POSITION, posicoesLuz);
+      glEnable(GL_LIGHT0);
+   }
+   else if(key == 't' || key == 'T')
+   {
+      glDisable(GL_LIGHT0);
    }
 
    if (key < 256)
@@ -357,10 +379,11 @@ int main(int argc, char** argv) {
 
    // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm 
    // ./app
+   static char * Model_file0 = "untitled.obj";
    static char * Model_file1 = "Moon2K.obj";
    static char * Model_file2 = "bed.obj";
    static char * Model_file3 = "bobcat.obj";
-   static char * Model_file4 = "../obj-development/montanha.obj";
+   static char * Model_file4 = "montanha.obj";
    // vai crashar com menos de 4 objetos pq to movendo PositionsX[3] hardcoded antes
    // se tirar objs tira isso ai tbm
 
@@ -381,10 +404,11 @@ int main(int argc, char** argv) {
 
    InitViewInfo(&View);
 
-   read_model(Model_file1, 0.5, 40, 90, 40);
+   read_model(Model_file0, 100, 0, 0, 0);
+   read_model(Model_file1, 10, 40, 90, 40);
    read_model(Model_file2, 3, 5, 0, 0);
    read_model(Model_file3, 3, 10, 0, 0);
-   read_model(Model_file4, 2, 40, 25, 40);
+   read_model(Model_file4, 10, 40, 25, 40);
    init();
 
    glutMainLoop();
