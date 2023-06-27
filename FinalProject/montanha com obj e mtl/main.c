@@ -32,6 +32,11 @@ static GLfloat *Scales;
 static GLfloat LightPositionsX = 0;
 static GLfloat LightPositionsY = 10;
 static GLfloat LightPositionsZ = 100;
+GLboolean animacao_bola_de_neve = GL_FALSE;
+GLboolean animacao_bola_de_neve_estagio1 = GL_FALSE;
+GLboolean animacao_bola_de_neve_estagio2 = GL_FALSE;
+GLboolean animacao_bola_de_neve_estagio3 = GL_FALSE;
+GLfloat vel_queda_bola_neve = 1.641861;
 
 int n_models = 0;
 
@@ -104,7 +109,7 @@ static void init(void){
    glShadeModel(GL_SMOOTH);
 
    GLint especMaterial =80;
-	// Define a concentra��o do brilho
+	// Define a concentração do brilho
 	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
 }
 
@@ -188,6 +193,61 @@ static void Mouse(int button, int state, int x, int y){
 
 void eventos()
 {
+   if(animacao_bola_de_neve)
+   {
+      if(animacao_bola_de_neve_estagio1)
+      {
+         vel_queda_bola_neve = 1.641861;
+         PositionsX[0] += 0.269845;
+         PositionsY[0] -= vel_queda_bola_neve;
+         PositionsZ[0] += 0.577322;
+         if (Scales[0] > 5)
+         {
+            Scales[0] += 0.1;
+
+         }
+         else Scales[0] += 0.25;
+      }
+      if(PositionsY[0] < 61 && animacao_bola_de_neve_estagio1)
+      {
+         animacao_bola_de_neve_estagio1 = GL_FALSE;
+         animacao_bola_de_neve_estagio2 = GL_TRUE;
+         vel_queda_bola_neve = -0.641861;
+      }
+      if(animacao_bola_de_neve_estagio2)
+      {
+         vel_queda_bola_neve += 0.1;
+         PositionsX[0] += 0.269845 * 2.1;
+         PositionsY[0] -= vel_queda_bola_neve;
+         PositionsZ[0] += 0.577322 * 2.1;
+      }
+      if(PositionsY[0] < 15 && animacao_bola_de_neve_estagio2)
+      {
+         vel_queda_bola_neve = 0.2;
+         animacao_bola_de_neve_estagio2 = GL_FALSE;
+         animacao_bola_de_neve_estagio3 = GL_TRUE;
+      }
+      if(animacao_bola_de_neve_estagio3)
+      {
+         PositionsX[0] += 0.269845 * 2;
+         PositionsY[0] -= 0.11;
+         Scales[0] -= 0.05;
+         PositionsZ[0] += 0.577322 * 2;
+
+      }
+      if((PositionsY[0] < 0 || Scales[0] < 0) && animacao_bola_de_neve_estagio3)
+      {
+         animacao_bola_de_neve = GL_FALSE;
+         PositionsX[0] = -39.148174;
+         PositionsY[0] = 128.500000;
+         PositionsZ[0] = 39.043934;
+         vel_queda_bola_neve = 1.641861;
+         Scales[0] = 0;
+         animacao_bola_de_neve_estagio1 = GL_FALSE;
+         animacao_bola_de_neve_estagio2 = GL_FALSE;
+         animacao_bola_de_neve_estagio3 = GL_FALSE;
+      }
+   }
    if (keys['w'] ||keys['W']) 
     {
       //move forward
@@ -271,7 +331,18 @@ static void Keyboard(unsigned char key, int x, int y)
    {
       glDisable(GL_LIGHT0);
    }
+   if(key == 'b' || key == 'B')
+   {
+      if(!animacao_bola_de_neve)
+      {
+         Scales[0] = 1; 
+         animacao_bola_de_neve = GL_TRUE;
+         animacao_bola_de_neve_estagio1 = GL_TRUE;
+         
 
+
+      }
+   }
    if (key < 256)
    {
       keys[key] = true; 
@@ -384,11 +455,9 @@ int main(int argc, char** argv) {
    static char * Model_file2 = "bed.obj";
    static char * Model_file3 = "bobcat.obj";
    static char * Model_file4 = "montanha.obj";
-   // vai crashar com menos de 4 objetos pq to movendo PositionsX[3] hardcoded antes
-   // se tirar objs tira isso ai tbm
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
-   glutCreateWindow("objview");
+   glutCreateWindow("Snowland");
 
    glewInit();
 
@@ -404,11 +473,11 @@ int main(int argc, char** argv) {
 
    InitViewInfo(&View);
 
-   read_model(Model_file0, 100, 0, 0, 0);
-   read_model(Model_file1, 10, 40, 90, 40);
+   //read_model(Model_file0, 1, 0, 0, 0);
+   read_model(Model_file1, 0, -39.148174, 128.5, 39.043934);
    read_model(Model_file2, 3, 5, 0, 0);
    read_model(Model_file3, 3, 10, 0, 0);
-   read_model(Model_file4, 10, 40, 25, 40);
+   read_model(Model_file4, 100, -40, 63.5, 40);
    init();
 
    glutMainLoop();
