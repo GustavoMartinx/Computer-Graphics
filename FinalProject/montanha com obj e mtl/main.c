@@ -485,7 +485,8 @@ int main(int argc, char** argv) {
    glutInit(&argc, argv);
    glutInitWindowSize(WinWidth, WinHeight);
 
-   // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm 
+   // sudo apt-get install libsoil-dev
+   // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm -lSOIL
    // ./app
    static char * Model_file0 = "untitled.obj";
    static char * Model_file1 = "Moon2K.obj";
