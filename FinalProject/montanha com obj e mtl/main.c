@@ -106,7 +106,6 @@ static void init(void){
    glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa);
 	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
-	glLightfv(GL_LIGHT0, GL_POSITION, posicoesLuz);
    GLfloat ambientColor[] = { 0.1f, 0.1f, 0.1f, 0.0f };
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor); 
    glShadeModel(GL_SMOOTH);
@@ -135,7 +134,7 @@ static void reshape(int width, int height) {
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   glFrustum(-ar, ar, -0.5, 0.5, 1.0, 600.0);
+   glFrustum(-ar, ar, -0.5, 0.5, 1, 600.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    glTranslatef(0.0, 0.0, -3.0);
@@ -162,27 +161,27 @@ static void display(void){
       glPopMatrix();
    }
 
-   glPushMatrix();
-   glEnable(GL_TEXTURE_2D);
+   // glPushMatrix();
+   // glEnable(GL_TEXTURE_2D);
+   // glColor3f(0.2f, 0.145f, 0.114f);
+   // glBindTexture(GL_TEXTURE_2D, texture);
+   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 
-   glBindTexture(GL_TEXTURE_2D, texture);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   // glBegin(GL_QUADS);
+   // glTexCoord2f(0, 0); 
+   // glVertex3f(0, 0, 0);
 
-   glBegin(GL_QUADS);
-   glTexCoord2f(0, 0); 
-   glVertex3f(0, 0, 0);
+   // glTexCoord2f(0, 1); 
+   // glVertex3f(0, 0, 100);
 
-   glTexCoord2f(0, 1); 
-   glVertex3f(0, 0, 100);
+   // glTexCoord2f(1, 1); 
+   // glVertex3f(100, 0, 100);
 
-   glTexCoord2f(1, 1); 
-   glVertex3f(100, 0, 100);
-
-   glTexCoord2f(1, 0); 
-   glVertex3f(100, 0, 0);
-   glEnd();
-   glDisable(GL_TEXTURE_2D);
-   glPopMatrix();
+   // glTexCoord2f(1, 0); 
+   // glVertex3f(100, 0, 0);
+   // glEnd();
+   // glDisable(GL_TEXTURE_2D);
+   // glPopMatrix();
 
    glutSwapBuffers();
 }
@@ -490,10 +489,10 @@ int main(int argc, char** argv) {
    // ./app
    static char * Model_file0 = "untitled.obj";
    static char * Model_file1 = "Moon2K.obj";
-   static char * Model_file2 = "../obj-development/color-door.obj";
+   static char * Model_file2 = "montanha.obj";
+   static char * Model_file4 = "../obj-development/color-door.obj";
    //static char * Model_file2 = "bed.obj";
-   static char * Model_file3 = "bobcat.obj";
-   static char * Model_file4 = "montanha.obj";
+   static char * Model_file3 = "../obj-development/cabana-roof-snow.obj";
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("Snowland");
@@ -514,9 +513,16 @@ int main(int argc, char** argv) {
 
    //read_model(Model_file0, 1, 0, 0, 0);
    read_model(Model_file1, 0, -39.148174, 128.5, 39.043934);
-   read_model(Model_file2, 5, 5, 0, 0);
-   read_model(Model_file3, 3, 10, 0, 0);
-   read_model(Model_file4, 100, -40, 63.5, 40);
+   read_model(Model_file2, 100, -40, 63.5, 40);
+   read_model(Model_file3, 100, 0, 9.500000, -12);
+   read_model(Model_file4, 99, 0, 3.5, 0);
+   //CONSTANTES DE SINCRONIZAÇÃO:
+   // SCALE:
+   // MONTANHA: 100 CASA: 100 PORTA: 99
+   // POSICAO: MONTANHA N SEI
+   // CASA: 9.5 PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
+   // PORTA: 3.5 PRA TIRAR DO CHÃO, TEM QUE VER O TAMANHO PRA RODAR ELA E ABRIR
+
    init();
 
    glutMainLoop();
