@@ -254,7 +254,7 @@ void eventos()
       xPosCamera = xPosCamera + 0.5 * xLookCamera;
       zPosCamera = zPosCamera + 0.5 * zLookCamera;
     } 
-    if (keys['a']) 
+    if (keys['a'] || keys['A']) 
     {
       //move left
       xPosCamera = xPosCamera + 0.5 * zLookCamera;
@@ -280,7 +280,7 @@ void eventos()
       PositionsX[0] = PositionsX[0] + 2 * xLookCamera;
       PositionsZ[0] = PositionsZ[0] + 2 * zLookCamera;
     } 
-    if (keys['j']) 
+    if (keys['j']|| keys['J']) 
     {
       //move left
       PositionsX[0] = PositionsX[0] + 2 * zLookCamera;
