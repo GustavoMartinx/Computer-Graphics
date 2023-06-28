@@ -168,30 +168,30 @@ static void init(void)
    // stbi_set_flip_vertically_on_load(true);
 
    // unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
-    glEnable(GL_TEXTURE_2D);
+    //glEnable(GL_TEXTURE_2D);
     //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
    // glGenTextures(1, &texture);
    
-
+   //glEnable(GL_TEXTURE_2D);
    texture = SOIL_load_OGL_texture(
        "container.jpg",
        SOIL_LOAD_AUTO,
        SOIL_CREATE_NEW_ID,
-       SOIL_FLAG_INVERT_Y);
+       SOIL_FLAG_TEXTURE_REPEATS);
 
    if(texture == 0){
       printf("\nporameu\n");
    }
 
-   glBindTexture(GL_TEXTURE_2D, texture);
+   //glBindTexture(GL_TEXTURE_2D, texture);
 
    // Typical Texture Generation Using Data From The Bitmap
    
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
    // if (data)
    // {
@@ -234,32 +234,37 @@ static void display(void)
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
              xUpCamera, yUpCamera, zUpCamera);
 
-   for (int i = 0; i < n_models; i++)
-   {
-      glPushMatrix();
-      glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
-      glRotatef(View.rotX, 1, 0, 0);
-      glRotatef(View.rotY, 0, 1, 0);
-      glScalef(Scales[i], Scales[i], Scales[i]);
-      glmDrawVBO(Models[i]);
-      glPopMatrix();
-   }
+   // for (int i = 0; i < n_models; i++)
+   // {
+   //    glPushMatrix();
+   //    glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+   //    glRotatef(View.rotX, 1, 0, 0);
+   //    glRotatef(View.rotY, 0, 1, 0);
+   //    glScalef(Scales[i], Scales[i], Scales[i]);
+   //    glmDrawVBO(Models[i]);
+   //    glPopMatrix();
+   // }
 
+   glPushMatrix();
+   //glColor4f(0.7f,0.7f,0.7f,0.4f);
+   glEnable(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, texture);
    //glActiveTexture(texture);
    glBegin(GL_QUADS);
       glTexCoord2f(0, 0); // Texture coordinate for the bottom-left vertex
-      glVertex3f(-1, -1, 0);
+      glVertex3f(0, 0, 0);
 
       glTexCoord2f(1, 0); // Texture coordinate for the bottom-right vertex
-      glVertex3f(1, -1, 0);
+      glVertex3f(3, 0, 0);
 
       glTexCoord2f(1, 1); // Texture coordinate for the top-right vertex
-      glVertex3f(1, 1, 0);
+      glVertex3f(3, 3, 0);
 
       glTexCoord2f(0, 1); // Texture coordinate for the top-left vertex
-      glVertex3f(-1, 1, 0);
+      glVertex3f(0, 3, 0);
    glEnd();
+   glDisable(GL_TEXTURE_2D);
+   glPopMatrix();
    // Shader_use(ourShader);
    // glBindVertexArray(VAO);
    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);

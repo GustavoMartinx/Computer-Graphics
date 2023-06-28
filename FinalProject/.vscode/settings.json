@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "shaderutil.h": "c",
+        "shader_h.h": "c"
+    }
+}
