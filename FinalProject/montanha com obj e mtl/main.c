@@ -41,6 +41,13 @@ GLboolean animacao_bola_de_neve_estagio2 = GL_FALSE;
 GLboolean animacao_bola_de_neve_estagio3 = GL_FALSE;
 GLfloat vel_queda_bola_neve = 1.641861;
 
+GLboolean animacao_porta = GL_FALSE;
+GLboolean porta_indo = GL_FALSE;
+GLboolean porta_voltando = GL_FALSE;
+GLfloat angulo_da_porta = 90;
+
+
+
 int n_models = 0;
 
 GLdouble xPosCamera = 0, yPosCamera = 0, zPosCamera = 5;
@@ -108,7 +115,7 @@ static void init(void){
 	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
    GLfloat ambientColor[] = { 0.1f, 0.1f, 0.1f, 0.0f };
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor); 
-   glShadeModel(GL_SMOOTH);
+   glShadeModel(GL_FLAT);
 
    GLint especMaterial =80;
 	// Define a concentração do brilho
@@ -153,6 +160,13 @@ static void display(void){
    for(int i = 0; i < n_models; i++)
    {
       glPushMatrix();
+         if(i == 1)
+         {
+            //glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+            //glRotatef(angulo_da_porta,1,0,0);   
+            //glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+            //transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
+         }
          glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
          glRotatef(View.rotX,1,0,0);
 	      glRotatef(View.rotY,0,1,0);
@@ -351,22 +365,6 @@ static void Keyboard(unsigned char key, int x, int y)
       printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
       printf("xPosCamera = %f, yPosCamera = %f, zPosCamera = %f\n", xPosCamera, yPosCamera, zPosCamera);
    }
-   else if(key == 'o' || key == 'O')
-   {
-      LightPositionsX = xPosCamera;
-      LightPositionsY = yPosCamera;
-      LightPositionsZ = zPosCamera;
-   }
-   else if(key == 'y' || key == 'Y')
-   {
-      GLfloat posicoesLuz[4]={LightPositionsX, LightPositionsY, LightPositionsZ, 1.0};
-      glLightfv(GL_LIGHT0, GL_POSITION, posicoesLuz);
-      glEnable(GL_LIGHT0);
-   }
-   else if(key == 't' || key == 'T')
-   {
-      glDisable(GL_LIGHT0);
-   }
    if(key == 'b' || key == 'B')
    {
       if(!animacao_bola_de_neve)
@@ -374,10 +372,21 @@ static void Keyboard(unsigned char key, int x, int y)
          Scales[0] = 1; 
          animacao_bola_de_neve = GL_TRUE;
          animacao_bola_de_neve_estagio1 = GL_TRUE;
-         
-
-
       }
+   }if(key == 'o' || key == 'O')
+   {
+      animacao_porta = GL_TRUE;
+      if (porta_indo)
+      {
+         porta_indo = GL_FALSE;
+         porta_voltando = GL_TRUE;
+      }
+      else
+      {
+         porta_voltando = GL_FALSE;
+         porta_indo = GL_TRUE;
+      }
+
    }
    if (key < 256)
    {
@@ -487,12 +496,12 @@ int main(int argc, char** argv) {
    // sudo apt-get install libsoil-dev
    // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm -lSOIL
    // ./app
-   static char * Model_file0 = "untitled.obj";
+   //static char * Model_file0 = "untitled.obj";
    static char * Model_file1 = "Moon2K.obj";
-   static char * Model_file2 = "montanha.obj";
-   static char * Model_file4 = "../obj-development/color-door.obj";
-   //static char * Model_file2 = "bed.obj";
+   static char * Model_file2 = "../obj-development/color-door.obj";
    static char * Model_file3 = "../obj-development/cabana-roof-snow.obj";
+   static char * Model_file4 = "montanha.obj";
+   //static char * Model_file2 = "bed.obj";
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("Snowland");
@@ -513,9 +522,9 @@ int main(int argc, char** argv) {
 
    //read_model(Model_file0, 1, 0, 0, 0);
    read_model(Model_file1, 0, -39.148174, 128.5, 39.043934);
-   read_model(Model_file2, 100, -40, 63.5, 40);
+   read_model(Model_file2, 100, 0, 3.5, 0);
    read_model(Model_file3, 100, 0, 9.500000, -12);
-   read_model(Model_file4, 99, 0, 3.5, 0);
+   read_model(Model_file4, 100, -40, 63.5, 40);
    //CONSTANTES DE SINCRONIZAÇÃO:
    // SCALE:
    // MONTANHA: 100 CASA: 100 PORTA: 99
