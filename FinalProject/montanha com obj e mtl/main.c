@@ -174,6 +174,7 @@ static void init(void)
    // glGenTextures(1, &texture);
    
    //glEnable(GL_TEXTURE_2D);
+   
    texture = SOIL_load_OGL_texture(
        "container.jpg",
        SOIL_LOAD_AUTO,
@@ -234,17 +235,6 @@ static void display(void)
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
              xUpCamera, yUpCamera, zUpCamera);
 
-   // for (int i = 0; i < n_models; i++)
-   // {
-   //    glPushMatrix();
-   //    glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
-   //    glRotatef(View.rotX, 1, 0, 0);
-   //    glRotatef(View.rotY, 0, 1, 0);
-   //    glScalef(Scales[i], Scales[i], Scales[i]);
-   //    glmDrawVBO(Models[i]);
-   //    glPopMatrix();
-   // }
-
    glPushMatrix();
    //glColor4f(0.7f,0.7f,0.7f,0.4f);
    glEnable(GL_TEXTURE_2D);
@@ -265,6 +255,18 @@ static void display(void)
    glEnd();
    glDisable(GL_TEXTURE_2D);
    glPopMatrix();
+
+   for (int i = 0; i < n_models; i++)
+   {
+      glPushMatrix();
+      glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+      glRotatef(View.rotX, 1, 0, 0);
+      glRotatef(View.rotY, 0, 1, 0);
+      glScalef(Scales[i], Scales[i], Scales[i]);
+      glmDrawVBO(Models[i]);
+      glPopMatrix();
+   }
+
    // Shader_use(ourShader);
    // glBindVertexArray(VAO);
    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
