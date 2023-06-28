@@ -490,7 +490,8 @@ int main(int argc, char** argv) {
    // ./app
    static char * Model_file0 = "untitled.obj";
    static char * Model_file1 = "Moon2K.obj";
-   static char * Model_file2 = "bed.obj";
+   static char * Model_file2 = "../obj-development/color-door.obj";
+   //static char * Model_file2 = "bed.obj";
    static char * Model_file3 = "bobcat.obj";
    static char * Model_file4 = "montanha.obj";
 
@@ -513,7 +514,7 @@ int main(int argc, char** argv) {
 
    //read_model(Model_file0, 1, 0, 0, 0);
    read_model(Model_file1, 0, -39.148174, 128.5, 39.043934);
-   read_model(Model_file2, 3, 5, 0, 0);
+   read_model(Model_file2, 5, 5, 0, 0);
    read_model(Model_file3, 3, 10, 0, 0);
    read_model(Model_file4, 100, -40, 63.5, 40);
    init();
