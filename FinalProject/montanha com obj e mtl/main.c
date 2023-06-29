@@ -264,7 +264,8 @@ static void display(void)
       glmDrawVBO(Models[i]);
       glPopMatrix();
    }
-
+   // -43, 12.6, 185
+   
    glColor3f(1, 1, 1);
    glTranslatef(0, 0.75, 0);
    glutSolidSphere(0.75, 10, 10);
