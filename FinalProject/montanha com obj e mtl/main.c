@@ -105,8 +105,8 @@ GLboolean fe = GL_FALSE;
 
 int n_models = 0;
 
-GLdouble xPosCamera = 474.008327, yPosCamera = 71, zPosCamera = 445.197818;
-volatile GLdouble xLookCamera = -0.821058, yLookCamera = -0.025116, zLookCamera = -0.550331;
+GLdouble xPosCamera = 408, yPosCamera = 283, zPosCamera = 377 ;
+volatile GLdouble xLookCamera = -0.867427, yLookCamera = -0.479646, zLookCamera = -0.481203 ;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
 GLboolean movendoCamera = GL_FALSE;
@@ -455,7 +455,7 @@ void eventos()
          ScalesZ[0] -= 0.05;
          PositionsZ[0] += 0.577322 * 2;
       }
-      if ((PositionsY[0] < 0 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
+      if ((PositionsX[0] > 35 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
       {
          animacao_bola_de_neve = GL_FALSE;
          PositionsX[0] = -33.734578;
