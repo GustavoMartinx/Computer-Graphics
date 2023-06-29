@@ -707,7 +707,7 @@ int main(int argc, char **argv)
    static char *Model_file1 = "Moon2K.obj";
    static char *Model_file2 = "../obj-development/color-door.obj";
    static char *Model_file3 = "../obj-development/cabana-roof-snow.obj";
-   static char *Model_file4 = "montanha.obj";
+   static char *Model_file4 = "../obj-development/montanha.obj";
    static char *Model_file5 = "../obj-development/base-globo.obj";
    static char *Model_file6 = "../obj-development/chao-neve.obj";
    static char *Model_file7 = "../obj-development/globo-black.obj";
@@ -727,7 +727,7 @@ int main(int argc, char **argv)
    read_model(Model_file4,
               -40, 63.5, 40,
               0, 0, 0,
-              100, 100, 100); // montanha
+              175, 175, 175); // montanha
    read_model(Model_file5,
               -23, -43.5, 130,
               0, 0, 0,
