@@ -95,6 +95,7 @@ GLboolean animacao_bola_de_neve = GL_FALSE;
 GLboolean animacao_bola_de_neve_estagio1 = GL_FALSE;
 GLboolean animacao_bola_de_neve_estagio2 = GL_FALSE;
 GLboolean animacao_bola_de_neve_estagio3 = GL_FALSE;
+GLfloat escala_montanha;
 GLfloat vel_queda_bola_neve = 1.641861;
 GLboolean animacao_porta = GL_FALSE;
 GLboolean porta_indo = GL_TRUE;
@@ -376,18 +377,18 @@ void eventos()
             ScalesZ[0] += 0.25;
          }
       }
-      if (PositionsY[0] < 61 && animacao_bola_de_neve_estagio1)
+      if (PositionsY[0] < 81 && animacao_bola_de_neve_estagio1)
       {
          animacao_bola_de_neve_estagio1 = GL_FALSE;
          animacao_bola_de_neve_estagio2 = GL_TRUE;
-         vel_queda_bola_neve = -0.641861;
+         vel_queda_bola_neve = -0.8209305;
       }
       if (animacao_bola_de_neve_estagio2)
       {
          vel_queda_bola_neve += 0.1;
-         PositionsX[0] += 0.269845 * 2.1;
+         PositionsX[0] += 0.269845 * 2.2;
          PositionsY[0] -= vel_queda_bola_neve;
-         PositionsZ[0] += 0.577322 * 2.1;
+         PositionsZ[0] += 0.577322 * 2.2;
       }
       if (PositionsY[0] < 15 && animacao_bola_de_neve_estagio2)
       {
@@ -407,9 +408,9 @@ void eventos()
       if ((PositionsY[0] < 0 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
       {
          animacao_bola_de_neve = GL_FALSE;
-         PositionsX[0] = -39.148174;
-         PositionsY[0] = 128.500000;
-         PositionsZ[0] = 39.043934;
+         PositionsX[0] = -33.734578;
+         PositionsY[0] = 179;
+         PositionsZ[0] = 40.194021;
          vel_queda_bola_neve = 1.641861;
          ScalesX[0] = 0;
          ScalesY[0] = 0;
@@ -712,10 +713,10 @@ int main(int argc, char **argv)
    static char *Model_file6 = "../obj-development/chao-neve.obj";
    static char *Model_file7 = "../obj-development/globo-black.obj";
    GLfloat escala_casa = 120;
-   GLfloat escala_montanha = 120;
+   escala_montanha = 230;
    read_model(Model_file1,
-              -39.148174, 128.5,
-              39.043934, 0, 0, 0,
+              -33.734578, 179, 40.194021,
+               0, 0, 0,
               0, 0, 0); // BOla de neve
    read_model(Model_file2,
               -30, 3 + (3.6* (escala_casa / 100)), 216,
@@ -728,7 +729,7 @@ int main(int argc, char **argv)
    read_model(Model_file4,
               -40, 87, 40,
               0, 0, 0,
-              230, 230, 230); // montanha
+              escala_montanha, escala_montanha, escala_montanha); // montanha
    read_model(Model_file5,
               -10, -43.5, 115,
               0, 0, 0,
