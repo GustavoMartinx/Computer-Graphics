@@ -26,7 +26,7 @@ bool keys[256];
 
 GLuint texture;
 
-#define MAX_PARTICLES 1000
+#define MAX_PARTICLES 4000
 #define WCX 640
 #define WCY 480
 #define RAIN 0
@@ -47,8 +47,8 @@ int fall;
 float r = 0.0;
 float g = 1.0;
 float b = 0.0;
-float ground_points[300][300][3];
-float ground_colors[300][300][4];
+float ground_points[400][400][3];
+float ground_colors[400][400][4];
 float accum = -10.0;
 
 typedef struct
@@ -100,11 +100,11 @@ GLboolean animacao_porta = GL_FALSE;
 GLboolean porta_indo = GL_TRUE;
 GLfloat angulo_da_porta = 0;
 unsigned char last_char = ' ';
-GLboolean fé = GL_FALSE;
+GLboolean fe = GL_FALSE;
 
 int n_models = 0;
 
-GLdouble xPosCamera = 408, yPosCamera = 283, zPosCamera = 377;
+GLdouble xPosCamera = 74, yPosCamera = 231, zPosCamera = 304;
 volatile GLdouble xLookCamera = -0.867427, yLookCamera = -0.479646, zLookCamera = -0.481203;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
@@ -129,6 +129,73 @@ static void InitViewInfo(ViewInfo *view)
    view->Translating = GL_FALSE;
    view->Distance = 12.0;
    view->StartDistance = 0.0;
+}
+
+void initParticles(int i)
+{
+   par_sys[i].alive = true;
+   par_sys[i].life = 10.0;
+   par_sys[i].fade = (float)(rand() % 100) / 1000.0f + 0.003f;
+
+   par_sys[i].xpos = (float)(rand() % 400) - 10;
+   par_sys[i].ypos = 300.0;
+   par_sys[i].zpos = (float)(rand() % 400) - 10;
+
+   par_sys[i].red = 0.5;
+   par_sys[i].green = 0.5;
+   par_sys[i].blue = 1.0;
+
+   par_sys[i].vel = velocity;
+   par_sys[i].gravity = -2.5; //-0.8;
+}
+
+void drawSnow()
+{
+   float x, y, z;
+   for (loop = 0; loop < MAX_PARTICLES; loop = loop + 2)
+   {
+      if (par_sys[loop].alive == true)
+      {
+         x = par_sys[loop].xpos;
+         y = par_sys[loop].ypos;
+         z = par_sys[loop].zpos + zoom;
+
+         // Draw particles
+         
+         glPushMatrix();
+         glTranslatef(x-150, y, z);
+         glScalef(0.2, 0.2, 0.2);
+         glmDrawVBO(Models[0]);
+         glPopMatrix();
+
+         // Update values
+         // Move
+         par_sys[loop].ypos += par_sys[loop].vel / (slowdown * 1000);
+         par_sys[loop].vel += par_sys[loop].gravity;
+         // Decay
+         par_sys[loop].life -= par_sys[loop].fade;
+
+         if (par_sys[loop].ypos <= -10)
+         {
+            int zi = z - zoom + 10;
+            int xi = x + 10;
+            ground_colors[zi][xi][0] = 1.0;
+            ground_colors[zi][xi][2] = 1.0;
+            ground_colors[zi][xi][3] += 1.0;
+            if (ground_colors[zi][xi][3] > 1.0)
+            {
+               ground_points[xi][zi][1] += 0.1;
+            }
+            par_sys[loop].life = -1.0;
+         }
+
+         // Revive
+         if (par_sys[loop].life < 0.0)
+         {
+            initParticles(loop);
+         }
+      }
+   }
 }
 
 static void read_model(char *Model_file,
@@ -163,7 +230,6 @@ static void read_model(char *Model_file,
    n_models += 1;
 }
 
-
 static void init(void)
 {
    glClearColor(0.2, 0.2, 0.4, 0.0);
@@ -190,7 +256,11 @@ static void init(void)
    // Define a concentração do brilho
    glMateriali(GL_FRONT, GL_SHININESS, especMaterial);
 
-
+   // Initialize particles
+   for (loop = 0; loop < MAX_PARTICLES; loop++)
+   {
+      initParticles(loop);
+   }
 
 #if TEXTURE
    texture = SOIL_load_OGL_texture(
@@ -205,8 +275,6 @@ static void init(void)
    }
 #endif
 }
-
-
 
 static void reshape(int width, int height)
 {
@@ -232,11 +300,13 @@ static void display(void)
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
              xUpCamera, yUpCamera, zUpCamera);
 
+    drawSnow();
+
    GLfloat especularidade[4] = {0.1, 0.1, 0.1, 1.0};
    GLfloat materialDiffuse[] = {1.0, 1.0f, 1.0f, 0.0f};
    for (int i = 0; i < n_models; i++)
    {
-      
+
       glPushMatrix();
       glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
       if (i == 1)
@@ -260,26 +330,6 @@ static void display(void)
       glmDrawVBO(Models[i]);
       glPopMatrix();
    }
-   // -43, 12.6, 185
-   
-   glColor3f(1, 1, 1);
-   glTranslatef(0, 0.75, 0);
-   glutSolidSphere(0.75, 10, 10);
-   glTranslatef(0, 1, 0);
-   glutSolidSphere(0.45, 10, 10);
-   glPushMatrix();
-
-   // Draw eyes
-   glTranslatef(0.2, 0, 0.5);
-   glColor3f(0, 0, 1);
-   glutSolidSphere(0.03, 10, 10);
-   glTranslatef(-0.2, 0, 0);
-   glutSolidSphere(0.03, 10, 10);
-
-   glPopMatrix();
-   glTranslatef(0.1, -0.05, 0.5);
-   glColor3f(1, 0, 0);
-   glutSolidCone(0.025, 0.25, 4, 4);
 
 #if TEXTURE
    glPushMatrix();
@@ -477,7 +527,7 @@ void eventos()
    }
 
    // mover montanha
-   if (fé)
+   if (fe)
    {
       if (keys['i'])
       {
@@ -524,7 +574,7 @@ static void Keyboard(unsigned char key, int x, int y)
 {
    if (last_char == 'f' && key == 'e')
    {
-      fé = GL_TRUE;
+      fe = GL_TRUE;
    }
    if (last_char == 'l' && key == 'u')
    {
