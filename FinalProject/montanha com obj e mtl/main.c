@@ -18,7 +18,10 @@ Observações:
 #include "glm.h"
 #include "util/trackball.h"
 #include "util/shaderutil.h"
-// #include <SOIL/SOIL.h>
+#define TEXTURE 0
+#if TEXTURE
+#include <SOIL/SOIL.h>
+#endif
 bool keys[256];
 
 GLuint texture;
@@ -125,18 +128,20 @@ static void init(void){
 
    GLint especMaterial =80;
 	// Define a concentração do brilho
-	// glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
+	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
 
-   // texture = SOIL_load_OGL_texture(
-   //     "Textures/grass.jpg",
-   //     SOIL_LOAD_AUTO,
-   //     SOIL_CREATE_NEW_ID,
-   //     SOIL_FLAG_TEXTURE_REPEATS);
+   #if TEXTURE
+   texture = SOIL_load_OGL_texture(
+       "Textures/grass.jpg",
+       SOIL_LOAD_AUTO,
+       SOIL_CREATE_NEW_ID,
+       SOIL_FLAG_TEXTURE_REPEATS);
 
-   // if (texture == 0)
-   // {
-   //    printf("\nERRO\n");
-   // }
+   if (texture == 0)
+   {
+      printf("\nERRO\n");
+   }
+   #endif
 }
 
 
@@ -188,29 +193,13 @@ static void display(void){
          glmDrawVBO(Models[i]);
       glPopMatrix();
    }
-
-   // glPushMatrix();
-   // glEnable(GL_TEXTURE_2D);
-   // glColor3f(0.2f, 0.145f, 0.114f);
-   // glBindTexture(GL_TEXTURE_2D, texture);
-   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-
-   // glBegin(GL_QUADS);
-   // glTexCoord2f(0, 0); 
-   // glVertex3f(0, 0, 0);
-
-   // glTexCoord2f(0, 1); 
-   // glVertex3f(0, 0, 100);
-
-   // glTexCoord2f(1, 1); 
-   // glVertex3f(100, 0, 100);
-
-   // glTexCoord2f(1, 0); 
-   // glVertex3f(100, 0, 0);
-   // glEnd();
-   // glDisable(GL_TEXTURE_2D);
-   // glPopMatrix();
-
+   #if TEXTURE
+   glPushMatrix();
+   glEnable(GL_TEXTURE_2D);
+   glColor3f(0.2f, 0.145f, 0.114f);
+   glBindTexture(GL_TEXTURE_2D, texture);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   #endif
    glutSwapBuffers();
 }
 
