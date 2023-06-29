@@ -31,7 +31,11 @@ bool keys[256];
 unsigned int texture1, texture2;
 GLuint texture;
 Shader *ourShader;
-unsigned int VBO, VAO, EBO;
+
+//////////////////////
+
+GLuint VBO, VAO, EBO;
+GLuint program;
 
 ////////////////////
 
@@ -50,8 +54,8 @@ static GLfloat LightPositionsZ = 21;
 
 int n_models = 0;
 
-GLdouble xPosCamera = 0, yPosCamera = 0, zPosCamera = 5;
-volatile GLdouble xLookCamera = 0, yLookCamera = 0, zLookCamera = -1;
+GLdouble xPosCamera = 0, yPosCamera = 0, zPosCamera = 0;
+volatile GLdouble xLookCamera = 0, yLookCamera = 0, zLookCamera = 1;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
 GLboolean movendoCamera = GL_FALSE;
@@ -76,6 +80,133 @@ static void InitViewInfo(ViewInfo *view)
    view->Distance = 12.0;
    view->StartDistance = 0.0;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+float vertices[] = {
+    // positions          // colors           // texture coords
+    0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right
+    0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+    -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
+};
+unsigned int indices[] = {
+    0, 1, 3, // first triangle
+    1, 2, 3  // second triangle
+};
+
+bool loadShader()
+{
+   // Vertex Shader
+
+   FILE *vShaderFile = fopen("texture_vertex.glsl", "r");
+   GLuint success;
+   char infoLog[512];
+
+   if (!vShaderFile)
+   {
+      printf("Failed to open vertex shader file\n");
+      return false;
+   }
+
+   fseek(vShaderFile, 0, SEEK_END);
+
+   printf("\nvShaderFileSize: %ld", ftell(vShaderFile));
+
+   long int vShaderFileSize = ftell(vShaderFile);
+
+   fseek(vShaderFile, 0, SEEK_SET);
+
+   GLchar *vShaderCode = (GLchar *)malloc(vShaderFileSize + 1);
+   fread(vShaderCode, vShaderFileSize, 1, vShaderFile);
+   vShaderCode[vShaderFileSize] = '\0';
+
+   printf("\nvShaderCode:\n\n%s", vShaderCode);
+
+   fclose(vShaderFile);
+
+   printf("\n");
+
+   GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+   const GLchar *vertSrc = vShaderCode;
+   glShaderSource(vertexShader, 1, &vertSrc, NULL);
+   glCompileShader(vertexShader);
+
+   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+   if (!success)
+   {
+      glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+      printf("\nERROR\n");
+      printf("\ninfolog: %s\n", infoLog);
+      return false;
+   }
+
+   // Fragment Shader
+
+   FILE *fShaderFile = fopen("texture_fragment.glsl", "r");
+
+   if (!fShaderFile)
+   {
+      printf("Failed to open fragment shader file\n");
+      free(vShaderCode);
+      return false;
+   }
+
+   fseek(fShaderFile, 0, SEEK_END);
+
+   printf("\nfShaderFileSize: %ld", ftell(fShaderFile));
+
+   long int fShaderFileSize = ftell(fShaderFile);
+
+   fseek(fShaderFile, 0, SEEK_SET);
+
+   GLchar *fShaderCode = (GLchar *)malloc(fShaderFileSize + 1);
+   fread(fShaderCode, fShaderFileSize, 1, fShaderFile);
+   fShaderCode[fShaderFileSize] = '\0';
+
+   printf("\nfShaderCode:\n\n%s", fShaderCode);
+
+   fclose(fShaderFile);
+
+   GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+   const GLchar *fragSrc = fShaderCode;
+   glShaderSource(fragmentShader, 1, &fragSrc, NULL);
+   glCompileShader(fragmentShader);
+
+   glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
+   if (!success)
+   {
+      glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
+      printf("\nERROR\n");
+      printf("\ninfolog: %s\n", infoLog);
+      return false;
+   }
+
+   // Program
+   program = glCreateProgram();
+
+   glAttachShader(program, vertexShader);
+   glAttachShader(program, fragmentShader);
+
+   glLinkProgram(program);
+
+   glGetProgramiv(program, GL_LINK_STATUS, &success);
+   if (!success)
+   {
+      glGetProgramInfoLog(program, 512, NULL, infoLog);
+      printf("\nERROR\n");
+      printf("\ninfolog: %s\n", infoLog);
+      return false;
+   }
+
+   glUseProgram(0);
+   glDeleteShader(vertexShader);
+   glDeleteShader(fragmentShader);
+
+   return true;
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 static void read_model(char *Model_file, GLfloat Scale, GLfloat PosX, GLfloat PosY, GLfloat PosZ)
 {
@@ -108,30 +239,52 @@ static void init(void)
    glEnable(GL_CULL_FACE);
    glEnable(GL_NORMALIZE);
    glCullFace(GL_BACK);
+   glFrontFace(GL_CCW);
+
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+   glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
    glEnable(GL_LIGHTING);
    GLfloat ambientColor[] = {0.1f, 0.1f, 1.0f, 0.0f};
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
+   glEnable(GL_COLOR_MATERIAL);
 
-   // if (!gladLoadGL())
-   // {
-   //    printf("\ndeuruim\n");
-   //    return;
-   // }
+   /////////////////////////////////////////////////////////////////////////////
 
-   // ourShader = Shader_create("texture.vs", "texture.fs");
+   if (!loadShader())
+   {
+      printf("\nERRO AO CARREGAR SHADER\n");
+   }
 
-   // float vertices[] = {
-   //     // positions          // colors           // texture coords
-   //     0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f,   // top right
-   //     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,  // bottom right
-   //     -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-   //     -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f   // top left
-   // };
-   // unsigned int indices[] = {
-   //     0, 1, 3, // first triangle
-   //     1, 2, 3  // second triangle
-   // };
+   glCreateVertexArrays(1, &VAO);
+   glBindVertexArray(VAO);
+
+   glGenBuffers(1, &VBO);
+   glBindBuffer(GL_ARRAY_BUFFER, VBO);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+   glGenBuffers(1, &EBO);
+   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
+   // Algumas diferenças: 
+   // sizeof(Vertex), (GLvoid *)offsetof(Vertex, position)
+   // sizeof(Vertex), (GLvoid *)offsetof(Vertex, color)
+   // sizeof(Vertex), (GLvoid *)offsetof(Vertex, texcoord)
+   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)0);
+   glEnableVertexAttribArray(0);
+
+   glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+   glEnableVertexAttribArray(1);
+
+   glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
+   glEnableVertexAttribArray(2);
+
+   glBindVertexArray(0);
+
+   /////////////////////////////////////////////////////////////////////////////
 
    // glGenVertexArrays(1, &VAO);
    // glGenBuffers(1, &VBO);
@@ -168,31 +321,32 @@ static void init(void)
    // stbi_set_flip_vertically_on_load(true);
 
    // unsigned char *data = stbi_load("container.jpg", &width, &height, &nrChannels, 0);
-    //glEnable(GL_TEXTURE_2D);
-    //glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+   // glEnable(GL_TEXTURE_2D);
+   // glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
 
    // glGenTextures(1, &texture);
-   
-   //glEnable(GL_TEXTURE_2D);
-   
-   texture = SOIL_load_OGL_texture(
-       "container.jpg",
-       SOIL_LOAD_AUTO,
-       SOIL_CREATE_NEW_ID,
-       SOIL_FLAG_TEXTURE_REPEATS);
 
-   if(texture == 0){
-      printf("\nporameu\n");
-   }
+   // glEnable(GL_TEXTURE_2D);
 
-   //glBindTexture(GL_TEXTURE_2D, texture);
+   // texture = SOIL_load_OGL_texture(
+   //     "container.jpg",
+   //     SOIL_LOAD_AUTO,
+   //     SOIL_CREATE_NEW_ID,
+   //     SOIL_FLAG_TEXTURE_REPEATS);
+
+   // if (texture == 0)
+   // {
+   //    printf("\nporameu\n");
+   // }
+
+   // glBindTexture(GL_TEXTURE_2D, texture);
 
    // Typical Texture Generation Using Data From The Bitmap
-   
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   // glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
    // if (data)
    // {
@@ -234,27 +388,28 @@ static void display(void)
    gluLookAt(xPosCamera, yPosCamera, zPosCamera,
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
              xUpCamera, yUpCamera, zUpCamera);
+   // glColor3f(0.0f, 1.0f, 0.0f);
+   // glPushMatrix();
 
-   glPushMatrix();
-   //glColor4f(0.7f,0.7f,0.7f,0.4f);
-   glEnable(GL_TEXTURE_2D);
-   glBindTexture(GL_TEXTURE_2D, texture);
-   //glActiveTexture(texture);
-   glBegin(GL_QUADS);
-      glTexCoord2f(0, 0); // Texture coordinate for the bottom-left vertex
-      glVertex3f(0, 0, 0);
+   // // glColor4f(0.7f,0.7f,0.7f,0.4f);
+   // // glEnable(GL_TEXTURE_2D);
+   // // glBindTexture(GL_TEXTURE_2D, texture);
+   // // glActiveTexture(texture);
+   // glBegin(GL_QUADS);
+   // // glTexCoord2f(0, 0); // Texture coordinate for the bottom-left vertex
+   // glVertex3f(0, 0, 0);
 
-      glTexCoord2f(1, 0); // Texture coordinate for the bottom-right vertex
-      glVertex3f(3, 0, 0);
+   // // glTexCoord2f(1, 0); // Texture coordinate for the bottom-right vertex
+   // glVertex3f(3, 0, 0);
 
-      glTexCoord2f(1, 1); // Texture coordinate for the top-right vertex
-      glVertex3f(3, 3, 0);
+   // // glTexCoord2f(1, 1); // Texture coordinate for the top-right vertex
+   // glVertex3f(3, 3, 0);
 
-      glTexCoord2f(0, 1); // Texture coordinate for the top-left vertex
-      glVertex3f(0, 3, 0);
-   glEnd();
-   glDisable(GL_TEXTURE_2D);
-   glPopMatrix();
+   // // glTexCoord2f(0, 1); // Texture coordinate for the top-left vertex
+   // glVertex3f(0, 3, 0);
+   // glEnd();
+   // // glDisable(GL_TEXTURE_2D);
+   // glPopMatrix();
 
    for (int i = 0; i < n_models; i++)
    {
@@ -266,6 +421,10 @@ static void display(void)
       glmDrawVBO(Models[i]);
       glPopMatrix();
    }
+
+   glUseProgram(program);
+   glBindVertexArray(VAO);
+   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
    // Shader_use(ourShader);
    // glBindVertexArray(VAO);
@@ -552,5 +711,8 @@ int main(int argc, char **argv)
    init();
 
    glutMainLoop();
+
+   glDeleteProgram(program);
+
    return 0;
 }
