@@ -105,8 +105,8 @@ GLboolean fé = GL_FALSE;
 
 int n_models = 0;
 
-GLdouble xPosCamera = 408, yPosCamera = 283, zPosCamera = 377;
-volatile GLdouble xLookCamera = -0.867427, yLookCamera = -0.479646, zLookCamera = -0.481203;
+GLdouble xPosCamera = 408, yPosCamera = 283, zPosCamera = 377 ;
+volatile GLdouble xLookCamera = -0.867427, yLookCamera = -0.479646, zLookCamera = -0.481203 ;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
 GLboolean movendoCamera = GL_FALSE;
