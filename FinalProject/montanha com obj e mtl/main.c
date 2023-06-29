@@ -396,6 +396,11 @@ static void Keyboard(unsigned char key, int x, int y)
    {
       fé = GL_TRUE;
    }
+   if(last_char == 'l' && key == 'u')
+   {
+      GLfloat posicoesLuz[4]={PositionsX[2], PositionsY[2], PositionsZ[2], 1.0};
+      glLightfv(GL_LIGHT0, GL_POSITION, posicoesLuz);
+   }
    if(key == 'o' || key == 'O') // debug snapshot
    {
       printf("Debug Info:\n");
