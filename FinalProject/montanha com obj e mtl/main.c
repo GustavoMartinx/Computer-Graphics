@@ -718,16 +718,16 @@ static void DoFeatureChecks(void)
 
 int main(int argc, char **argv)
 {
-   Models = calloc(10, sizeof(GLMmodel *));
-   ScalesX = calloc(10, sizeof(GLfloat));
-   ScalesY = calloc(10, sizeof(GLfloat));
-   ScalesZ = calloc(10, sizeof(GLfloat));
-   PositionsX = calloc(10, sizeof(GLfloat));
-   PositionsY = calloc(10, sizeof(GLfloat));
-   PositionsZ = calloc(10, sizeof(GLfloat));
-   RotationsX = calloc(10, sizeof(GLfloat));
-   RotationsY = calloc(10, sizeof(GLfloat));
-   RotationsZ = calloc(10, sizeof(GLfloat));
+   Models = calloc(15, sizeof(GLMmodel *));
+   ScalesX = calloc(15, sizeof(GLfloat));
+   ScalesY = calloc(15, sizeof(GLfloat));
+   ScalesZ = calloc(15, sizeof(GLfloat));
+   PositionsX = calloc(15, sizeof(GLfloat));
+   PositionsY = calloc(15, sizeof(GLfloat));
+   PositionsZ = calloc(15, sizeof(GLfloat));
+   RotationsX = calloc(15, sizeof(GLfloat));
+   RotationsY = calloc(15, sizeof(GLfloat));
+   RotationsZ = calloc(15, sizeof(GLfloat));
    glutInit(&argc, argv);
    glutInitWindowSize(WinWidth, WinHeight);
 
@@ -761,7 +761,8 @@ int main(int argc, char **argv)
    static char *Model_file4 = "../obj-development/montanha.obj";
    static char *Model_file5 = "../obj-development/base-globo.obj";
    static char *Model_file6 = "../obj-development/chao-neve.obj";
-   static char *Model_file7 = "../obj-development/globo-black.obj";
+   static char *Model_file7 = "../obj-development/terrain-forest.obj";
+   static char *Model_file8 = "../obj-development/globo-black.obj";
    GLfloat escala_casa = 120;
    escala_montanha = 230;
    read_model(Model_file1,
@@ -789,6 +790,10 @@ int main(int argc, char **argv)
               0, 0, 0,
               235, 100, 235); // Chão neve
    read_model(Model_file7,
+              -10, 20, 115,
+              0, 0, 0,
+              235, 235, 235); // Arvores/cenario
+   read_model(Model_file8,
               -10, 80, 115,
               0, 0, 0,
               250, 250, 250); // Globo
