@@ -26,6 +26,54 @@ bool keys[256];
 
 GLuint texture;
 
+#define MAX_PARTICLES 1000
+#define WCX 640
+#define WCY 480
+#define RAIN 0
+#define SNOW 1
+#define HAIL 2
+
+float slowdown = 2.0;
+float velocity = 0.0;
+float zoom = -40.0;
+float pan = 0.0;
+float tilt = 0.0;
+float hailsize = 0.1;
+
+int loop;
+int fall;
+
+// floor colors
+float r = 0.0;
+float g = 1.0;
+float b = 0.0;
+float ground_points[100][100][3];
+float ground_colors[100][100][4];
+float accum = -10.0;
+
+typedef struct
+{
+   // Life
+   bool alive; // is the particle alive?
+   float life; // particle lifespan
+   float fade; // decay
+   // color
+   float red;
+   float green;
+   float blue;
+   // Position/direction
+   float xpos;
+   float ypos;
+   float zpos;
+   // Velocity/Direction, only goes down in y dir
+   float vel;
+   // Gravity
+   float gravity;
+} particles;
+
+// Paticle System
+particles par_sys[MAX_PARTICLES];
+
 static char *Model_file = NULL;		/* nome do arquivo do objeto */
 static GLMmodel *Model;             /* modelo do objeto*/
 static GLfloat Scale = 4.0;			/* fator de escala */
@@ -37,7 +85,9 @@ GLfloat *PositionsZ;
 GLfloat *RotationsX;
 GLfloat *RotationsY;
 GLfloat *RotationsZ;
-GLfloat *Scales;
+GLfloat *ScalesX;
+GLfloat *ScalesY;
+GLfloat *ScalesZ;
 static GLfloat LightPositionsX = 0;
 static GLfloat LightPositionsY = 10;
 static GLfloat LightPositionsZ = 100;
@@ -54,8 +104,8 @@ GLboolean fé = GL_FALSE;
 
 int n_models = 0;
 
-GLdouble xPosCamera = -41, yPosCamera = 5, zPosCamera = 214;
-volatile GLdouble xLookCamera = 0, yLookCamera= 0, zLookCamera = -1;
+GLdouble xPosCamera = 408, yPosCamera = 283, zPosCamera = 377;
+volatile GLdouble xLookCamera = -0.867427, yLookCamera= -0.479646, zLookCamera = -0.481203;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
 GLboolean movendoCamera = GL_FALSE;
@@ -79,14 +129,17 @@ static void InitViewInfo(ViewInfo *view){
    view->StartDistance = 0.0;
 }
 
-static void read_model(char *Model_file, GLfloat Scale,
+static void read_model(char *Model_file,
                       GLfloat PosX, GLfloat PosY, GLfloat PosZ,
-                     GLfloat RotX, GLfloat RotY, GLfloat RotZ) {
+                     GLfloat RotX, GLfloat RotY, GLfloat RotZ,
+                     GLfloat ScaleX, GLfloat ScaleY, GLfloat ScaleZ) {
    float objScale;
 
    /* lendo o modelo */
    Models[n_models] = glmReadOBJ(Model_file);
-   Scales[n_models] = Scale;
+   ScalesX[n_models] = ScaleX;
+   ScalesY[n_models] = ScaleY;
+   ScalesZ[n_models] = ScaleZ;
    objScale = glmUnitize(Models[n_models]);
    PositionsX[n_models] = PosX;
    PositionsY[n_models] = PosY;
@@ -105,6 +158,25 @@ static void read_model(char *Model_file, GLfloat Scale,
    glmMakeVBOs(Models[n_models]);
    n_models += 1;
 }
+
+void initParticles(int i) {
+    par_sys[i].alive = true;
+    par_sys[i].life = 10.0;
+    par_sys[i].fade = (float)(rand()%100)/1000.0f+0.003f;
+
+    par_sys[i].xpos = (float) (rand() % 100) - 10;
+    par_sys[i].ypos = 60.0;
+    par_sys[i].zpos = (float) (rand() % 100) - 10;
+
+    par_sys[i].red = 0.5;
+    par_sys[i].green = 0.5;
+    par_sys[i].blue = 1.0;
+
+    par_sys[i].vel = velocity;
+    par_sys[i].gravity = -0.8;//-0.8;
+
+}
+
 static void init(void){
    glClearColor(0.2, 0.2, 0.4, 0.0);
    glEnable(GL_DEPTH_TEST);
@@ -152,7 +224,7 @@ static void reshape(int width, int height) {
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   glFrustum(-ar, ar, -0.5, 0.5, 1, 600.0);
+   glFrustum(-ar, ar, -0.5, 0.5, 1, 1000.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    glTranslatef(0.0, 0.0, -3.0);
@@ -189,10 +261,30 @@ static void display(void){
             glTranslatef(2, 0, 0); //Para girar em torno do batente
             //transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
          }
-         glScalef(Scales[i], Scales[i], Scales[i]);
+         glScalef(ScalesX[i], ScalesY[i], ScalesZ[i]);
          glmDrawVBO(Models[i]);
       glPopMatrix();
    }
+
+   glColor3f(1, 1, 1);
+   glTranslatef(0, 0.75, 0);
+   glutSolidSphere(0.75, 10, 10);
+   glTranslatef(0, 1, 0);
+   glutSolidSphere(0.45, 10, 10);
+   glPushMatrix(); 
+
+   //Draw eyes
+   glTranslatef(0.2, 0, 0.5);
+   glColor3f(0, 0, 1);
+   glutSolidSphere(0.03, 10, 10);
+   glTranslatef(-0.2, 0, 0);
+   glutSolidSphere(0.03, 10, 10);
+
+   glPopMatrix();
+   glTranslatef(0.1, -0.05, 0.5);
+   glColor3f(1, 0, 0);
+   glutSolidCone(0.025, 0.25, 4, 4);
+
    #if TEXTURE
    glPushMatrix();
    glEnable(GL_TEXTURE_2D);
@@ -271,12 +363,20 @@ void eventos()
          PositionsX[0] += 0.269845;
          PositionsY[0] -= vel_queda_bola_neve;
          PositionsZ[0] += 0.577322;
-         if (Scales[0] > 5)
+         if (ScalesY[0] > 5)
          {
-            Scales[0] += 0.1;
+            ScalesX[0] += 0.1;
+            ScalesY[0] += 0.1;
+            ScalesZ[0] += 0.1;
 
          }
-         else Scales[0] += 0.25;
+         else
+         {
+            ScalesX[0] += 0.25;
+            ScalesY[0] += 0.25;
+            ScalesZ[0] += 0.25;
+         }
+            
       }
       if(PositionsY[0] < 61 && animacao_bola_de_neve_estagio1)
       {
@@ -301,18 +401,22 @@ void eventos()
       {
          PositionsX[0] += 0.269845 * 2;
          PositionsY[0] -= 0.11;
-         Scales[0] -= 0.05;
+         ScalesX[0] -= 0.05;
+         ScalesY[0] -= 0.05;
+         ScalesZ[0] -= 0.05;
          PositionsZ[0] += 0.577322 * 2;
 
       }
-      if((PositionsY[0] < 0 || Scales[0] < 0) && animacao_bola_de_neve_estagio3)
+      if((PositionsY[0] < 0 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
       {
          animacao_bola_de_neve = GL_FALSE;
          PositionsX[0] = -39.148174;
          PositionsY[0] = 128.500000;
          PositionsZ[0] = 39.043934;
          vel_queda_bola_neve = 1.641861;
-         Scales[0] = 0;
+         ScalesX[0] = 0;
+         ScalesY[0] = 0;
+         ScalesZ[0] = 0;
          animacao_bola_de_neve_estagio1 = GL_FALSE;
          animacao_bola_de_neve_estagio2 = GL_FALSE;
          animacao_bola_de_neve_estagio3 = GL_FALSE;
@@ -320,27 +424,59 @@ void eventos()
    }
    if (keys['w'] ) 
     {
+      keys['W'] = false;
       //move forward
       xPosCamera = xPosCamera + 0.5 * xLookCamera;
       zPosCamera = zPosCamera + 0.5 * zLookCamera;
     } 
-    if (keys['a'] || keys['A']) 
+    if (keys['a']) 
     {
+      keys['A'] = false;
       //move left
       xPosCamera = xPosCamera + 0.5 * zLookCamera;
       zPosCamera = zPosCamera - 0.5 * xLookCamera;
     } 
     if (keys['s'] ) 
     {
+      keys['S'] = false;
       //move back
       xPosCamera = xPosCamera - 0.5 * xLookCamera;
       zPosCamera = zPosCamera - 0.5 * zLookCamera;
     } 
     if (keys['d'] ) 
     {
+      keys['D'] = false;
       //move right
       xPosCamera = xPosCamera - 0.5 * zLookCamera;
       zPosCamera = zPosCamera + 0.5 * xLookCamera;
+    }
+    if (keys['W'] ) 
+    {
+      keys['w'] = false;
+      //fast move forward
+      xPosCamera = xPosCamera + 2.0 * xLookCamera;
+      zPosCamera = zPosCamera + 2.0 * zLookCamera;
+    } 
+    if (keys['A']) 
+    {
+      keys['a'] = false;
+      //fast move left
+      xPosCamera = xPosCamera + 2.0 * zLookCamera;
+      zPosCamera = zPosCamera - 2.0 * xLookCamera;
+    } 
+    if (keys['S'] ) 
+    {
+      keys['s'] = false;
+      //fast move back
+      xPosCamera = xPosCamera - 2.0 * xLookCamera;
+      zPosCamera = zPosCamera - 2.0 * zLookCamera;
+    } 
+    if (keys['D'] ) 
+    {
+      keys['d'] = false;
+      //fast move right
+      xPosCamera = xPosCamera - 2.0 * zLookCamera;
+      zPosCamera = zPosCamera + 2.0 * xLookCamera;
     }
     
     // mover montanha
@@ -351,7 +487,7 @@ void eventos()
       PositionsX[3] = PositionsX[3] + 2 * xLookCamera;
       PositionsZ[3] = PositionsZ[3] + 2 * zLookCamera;
     } 
-    if (keys['j']|| keys['J']) 
+    if (keys['j']) 
     {
       //move left
       PositionsX[3] = PositionsX[3] + 2 * zLookCamera;
@@ -372,9 +508,11 @@ void eventos()
     }
 
     if (keys[' ']) {
-      yPosCamera = yPosCamera + 0.5;
-    } else if (keys['q']) {
-      yPosCamera = yPosCamera - 0.5;
+      yPosCamera = yPosCamera + 2.0;
+    } else if (keys['q'] || keys['Q']) {
+      if(keys['Q']) keys['q'] = false;
+      if(keys['q']) keys['Q'] = false;
+      yPosCamera = yPosCamera - 2.0;
     }
     glutPostRedisplay();
 }
@@ -400,7 +538,9 @@ static void Keyboard(unsigned char key, int x, int y)
    {
       if(!animacao_bola_de_neve)
       {
-         Scales[0] = 1; 
+         ScalesX[0] = 1; 
+         ScalesY[0] = 1; 
+         ScalesZ[0] = 1; 
          animacao_bola_de_neve = GL_TRUE;
          animacao_bola_de_neve_estagio1 = GL_TRUE;
       }
@@ -516,7 +656,9 @@ static void DoFeatureChecks(void){
 
 int main(int argc, char** argv) {
    Models = calloc(10, sizeof(GLMmodel *));
-   Scales = calloc(10, sizeof(GLfloat));
+   ScalesX = calloc(10, sizeof(GLfloat));
+   ScalesY = calloc(10, sizeof(GLfloat));
+   ScalesZ = calloc(10, sizeof(GLfloat));
    PositionsX = calloc(10, sizeof(GLfloat));
    PositionsY = calloc(10, sizeof(GLfloat));
    PositionsZ = calloc(10, sizeof(GLfloat));
@@ -554,11 +696,39 @@ int main(int argc, char** argv) {
    static char * Model_file2 = "../obj-development/color-door.obj";
    static char * Model_file3 = "../obj-development/cabana-roof-snow.obj";
    static char * Model_file4 = "montanha.obj";
+   static char * Model_file5 = "../obj-development/base-globo.obj";
+   static char * Model_file6 = "../obj-development/chao-neve.obj";
+   static char * Model_file7 = "../obj-development/globo-black.obj";
 
-   read_model(Model_file1, 0, -39.148174, 128.5, 39.043934, 0, 0, 0);
-   read_model(Model_file2, 100, -43, 3.6, 185, 0, 0, 0); // PORTA
-   read_model(Model_file3, 100, -43, 9.6, 185, 0, 75, 0); // CASA
-   read_model(Model_file4, 100, -40, 63.5, 40, 0, 0, 0);
+
+   read_model(Model_file1, 
+            -39.148174, 128.5,
+            39.043934, 0, 0, 0,
+            0, 0, 0); // BOla de neve
+   read_model(Model_file2, 
+            -43, 6.6, 185,
+            0, 0, 0,
+            100, 100, 100); // PORTA
+   read_model(Model_file3, 
+            -43, 12.6, 185, 
+            0, 15, 0,
+            100, 100, 100); // CASA
+   read_model(Model_file4,  
+            -40, 63.5, 40, 
+            0, 0, 0,
+            100, 100, 100); // montanha
+   read_model(Model_file5,  
+            -23, -43.5, 130, 
+            0, 0, 0,
+            300, 300, 300); // Base Globo
+   read_model(Model_file6,  
+            -23, 1, 130,  
+            0, 0, 0,
+            235, 100, 235); // Chão neve
+   read_model(Model_file7,  
+            -23, 80, 130,  
+            0, 0, 0,
+            250, 250, 250); // Globo
 
    //CONSTANTES DE SINCRONIZAÇÃO:
    // SCALE:
