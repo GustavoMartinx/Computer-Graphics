@@ -405,7 +405,7 @@ void eventos()
          ScalesZ[0] -= 0.05;
          PositionsZ[0] += 0.577322 * 2;
       }
-      if ((PositionsY[0] < 0 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
+      if ((PositionsX[0] > 35 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
       {
          animacao_bola_de_neve = GL_FALSE;
          PositionsX[0] = -33.734578;
