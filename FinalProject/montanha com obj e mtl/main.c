@@ -47,8 +47,8 @@ int fall;
 float r = 0.0;
 float g = 1.0;
 float b = 0.0;
-float ground_points[100][100][3];
-float ground_colors[100][100][4];
+float ground_points[300][300][3];
+float ground_colors[300][300][4];
 float accum = -10.0;
 
 typedef struct
@@ -74,11 +74,11 @@ typedef struct
 // Paticle System
 particles par_sys[MAX_PARTICLES];
 
-static char *Model_file = NULL;		/* nome do arquivo do objeto */
-static GLMmodel *Model;             /* modelo do objeto*/
-static GLfloat Scale = 4.0;			/* fator de escala */
+static char *Model_file = NULL; /* nome do arquivo do objeto */
+static GLMmodel *Model;         /* modelo do objeto*/
+static GLfloat Scale = 4.0;     /* fator de escala */
 static GLint WinWidth = 1024, WinHeight = 768;
-GLMmodel ** Models;
+GLMmodel **Models;
 GLfloat *PositionsX;
 GLfloat *PositionsY;
 GLfloat *PositionsZ;
@@ -105,14 +105,15 @@ GLboolean fé = GL_FALSE;
 int n_models = 0;
 
 GLdouble xPosCamera = 408, yPosCamera = 283, zPosCamera = 377;
-volatile GLdouble xLookCamera = -0.867427, yLookCamera= -0.479646, zLookCamera = -0.481203;
+volatile GLdouble xLookCamera = -0.867427, yLookCamera = -0.479646, zLookCamera = -0.481203;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
 GLboolean movendoCamera = GL_FALSE;
-typedef struct{
+typedef struct
+{
    // Variáveis para controles de rotação
    float rotX, rotY, rotX_ini, rotY_ini;
-   int x_ini,y_ini,bot;
+   int x_ini, y_ini, bot;
    float Distance;
    /* Quando o mouse está se movendo */
    GLboolean Rotating, Translating;
@@ -122,7 +123,8 @@ typedef struct{
 
 static ViewInfo View;
 
-static void InitViewInfo(ViewInfo *view){
+static void InitViewInfo(ViewInfo *view)
+{
    view->Rotating = GL_FALSE;
    view->Translating = GL_FALSE;
    view->Distance = 12.0;
@@ -130,9 +132,10 @@ static void InitViewInfo(ViewInfo *view){
 }
 
 static void read_model(char *Model_file,
-                      GLfloat PosX, GLfloat PosY, GLfloat PosZ,
-                     GLfloat RotX, GLfloat RotY, GLfloat RotZ,
-                     GLfloat ScaleX, GLfloat ScaleY, GLfloat ScaleZ) {
+                       GLfloat PosX, GLfloat PosY, GLfloat PosZ,
+                       GLfloat RotX, GLfloat RotY, GLfloat RotZ,
+                       GLfloat ScaleX, GLfloat ScaleY, GLfloat ScaleZ)
+{
    float objScale;
 
    /* lendo o modelo */
@@ -148,7 +151,8 @@ static void read_model(char *Model_file,
    RotationsY[n_models] = RotY;
    RotationsZ[n_models] = RotZ;
    glmFacetNormals(Models[n_models]);
-   if (Models[n_models]->numnormals == 0) {
+   if (Models[n_models]->numnormals == 0)
+   {
       GLfloat smoothing_angle = 90.0;
       glmVertexNormals(Models[n_models], smoothing_angle);
    }
@@ -159,25 +163,26 @@ static void read_model(char *Model_file,
    n_models += 1;
 }
 
-void initParticles(int i) {
-    par_sys[i].alive = true;
-    par_sys[i].life = 10.0;
-    par_sys[i].fade = (float)(rand()%100)/1000.0f+0.003f;
+void initParticles(int i)
+{
+   par_sys[i].alive = true;
+   par_sys[i].life = 10.0;
+   par_sys[i].fade = (float)(rand() % 100) / 1000.0f + 0.003f;
 
-    par_sys[i].xpos = (float) (rand() % 100) - 10;
-    par_sys[i].ypos = 60.0;
-    par_sys[i].zpos = (float) (rand() % 100) - 10;
+   par_sys[i].xpos = (float)(rand() % 300) - 10;
+   par_sys[i].ypos = 200.0;
+   par_sys[i].zpos = (float)(rand() % 300) - 10;
 
-    par_sys[i].red = 0.5;
-    par_sys[i].green = 0.5;
-    par_sys[i].blue = 1.0;
+   par_sys[i].red = 0.5;
+   par_sys[i].green = 0.5;
+   par_sys[i].blue = 1.0;
 
-    par_sys[i].vel = velocity;
-    par_sys[i].gravity = -0.8;//-0.8;
-
+   par_sys[i].vel = velocity;
+   par_sys[i].gravity = -0.8; //-0.8;
 }
 
-static void init(void){
+static void init(void)
+{
    glClearColor(0.2, 0.2, 0.4, 0.0);
    glEnable(GL_DEPTH_TEST);
    glEnable(GL_CULL_FACE);
@@ -186,23 +191,29 @@ static void init(void){
    glEnable(GL_COLOR_MATERIAL);
    glEnable(GL_LIGHTING);
    glEnable(GL_LIGHT0);
-   GLfloat luzAmbiente[4]={0.1,0.1,0.1,1.0};
+   GLfloat luzAmbiente[4] = {0.1, 0.1, 0.1, 1.0};
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, luzAmbiente);
-	GLfloat luzDifusa[4]={0.3,0.3,0.3,1.0};	  
-	GLfloat luzEspecular[4]={0.5, 0.5, 0.5, 1.0};
-   GLfloat posicoesLuz[4]={LightPositionsX, LightPositionsY, LightPositionsZ, 1.0};
+   GLfloat luzDifusa[4] = {0.3, 0.3, 0.3, 1.0};
+   GLfloat luzEspecular[4] = {0.5, 0.5, 0.5, 1.0};
+   GLfloat posicoesLuz[4] = {LightPositionsX, LightPositionsY, LightPositionsZ, 1.0};
    glLightfv(GL_LIGHT0, GL_AMBIENT, luzAmbiente);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
-   GLfloat ambientColor[] = { 0.1f, 0.1f, 0.1f, 0.0f };
-   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor); 
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, luzDifusa);
+   glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
+   GLfloat ambientColor[] = {0.1f, 0.1f, 0.1f, 0.0f};
+   glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor);
    glShadeModel(GL_SMOOTH);
 
-   GLint especMaterial =80;
-	// Define a concentração do brilho
-	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
+   GLint especMaterial = 80;
+   // Define a concentração do brilho
+   glMateriali(GL_FRONT, GL_SHININESS, especMaterial);
 
-   #if TEXTURE
+   // Initialize particles
+   for (loop = 0; loop < MAX_PARTICLES; loop++)
+   {
+      initParticles(loop);
+   }
+
+#if TEXTURE
    texture = SOIL_load_OGL_texture(
        "Textures/grass.jpg",
        SOIL_LOAD_AUTO,
@@ -213,14 +224,62 @@ static void init(void){
    {
       printf("\nERRO\n");
    }
-   #endif
+#endif
 }
 
+void drawSnow()
+{
+   float x, y, z;
+   for (loop = 0; loop < MAX_PARTICLES; loop = loop + 2)
+   {
+      if (par_sys[loop].alive == true)
+      {
+         x = par_sys[loop].xpos;
+         y = par_sys[loop].ypos;
+         z = par_sys[loop].zpos + zoom;
 
-static void reshape(int width, int height) {
-   float ar = 0.5 * (float) width / (float) height; //razão de aspecto
-   WinWidth = width; //largura da janela
-   WinHeight = height;  //atura da janela
+         // Draw particles
+         glColor3f(1.0, 1.0, 1.0);
+         glPushMatrix();
+         glTranslatef(x, y, z);
+         glutSolidSphere(0.2, 16, 16);
+         glPopMatrix();
+
+         // Update values
+         // Move
+         par_sys[loop].ypos += par_sys[loop].vel / (slowdown * 1000);
+         par_sys[loop].vel += par_sys[loop].gravity;
+         // Decay
+         par_sys[loop].life -= par_sys[loop].fade;
+
+         if (par_sys[loop].ypos <= -10)
+         {
+            int zi = z - zoom + 10;
+            int xi = x + 10;
+            ground_colors[zi][xi][0] = 1.0;
+            ground_colors[zi][xi][2] = 1.0;
+            ground_colors[zi][xi][3] += 1.0;
+            if (ground_colors[zi][xi][3] > 1.0)
+            {
+               ground_points[xi][zi][1] += 0.1;
+            }
+            par_sys[loop].life = -1.0;
+         }
+
+         // Revive
+         if (par_sys[loop].life < 0.0)
+         {
+            initParticles(loop);
+         }
+      }
+   }
+}
+
+static void reshape(int width, int height)
+{
+   float ar = 0.5 * (float)width / (float)height; // razão de aspecto
+   WinWidth = width;                              // largura da janela
+   WinHeight = height;                            // atura da janela
    glViewport(0, 0, width, height);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
@@ -230,39 +289,48 @@ static void reshape(int width, int height) {
    glTranslatef(0.0, 0.0, -3.0);
 }
 
-static void display(void){
+static void display(void)
+{
    GLfloat rot[4][4];
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    gluLookAt(xPosCamera, yPosCamera, zPosCamera,
              xPosCamera + xLookCamera, yPosCamera + yLookCamera, zPosCamera + zLookCamera,
-            xUpCamera, yUpCamera, zUpCamera);
-   
-   GLfloat especularidade[4]={0.1,0.1,0.1,1.0};
-   for(int i = 0; i < n_models; i++)
+             xUpCamera, yUpCamera, zUpCamera);
+
+   GLfloat especularidade[4] = {0.1, 0.1, 0.1, 1.0};
+   GLfloat materialDiffuse[] = {1.0, 1.0f, 1.0f, 0.0f};
+   for (int i = 0; i < n_models; i++)
    {
+      // if (i == 2)
+      // {
+      //    glPushMatrix();
+      //    glMaterialfv(GL_FRONT, GL_DIFFUSE, materialDiffuse);
+      //    drawSnow();
+      //    glPopMatrix();
+      // }
       glPushMatrix();
-         glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
-         if(i == 1)
-         {
-            glRotatef(RotationsY[2],0,1,0); // Para rodar a porta no lugar dela
-            glTranslatef(0, 0, 12); // Para sincronizar a porta com a casa
-         }
-         glRotatef(View.rotX,1,1,0);
-	      glRotatef(View.rotY,0,1,0);
-         glRotatef(RotationsX[i],1,0,0);
-         glRotatef(RotationsY[i],0,1,0);
-         glRotatef(RotationsZ[i],0,0,1);
-         if(i == 1)
-         {
-            glTranslatef(-2, 0, 0);
-            glRotatef(angulo_da_porta,0,1,0); // Para fazer a animação da porta
-            glTranslatef(2, 0, 0); //Para girar em torno do batente
-            //transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
-         }
-         glScalef(ScalesX[i], ScalesY[i], ScalesZ[i]);
-         glmDrawVBO(Models[i]);
+      glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+      if (i == 1)
+      {
+         glRotatef(RotationsY[2], 0, 1, 0); // Para rodar a porta no lugar dela
+         glTranslatef(0, 0, 12);            // Para sincronizar a porta com a casa
+      }
+      glRotatef(View.rotX, 1, 1, 0);
+      glRotatef(View.rotY, 0, 1, 0);
+      glRotatef(RotationsX[i], 1, 0, 0);
+      glRotatef(RotationsY[i], 0, 1, 0);
+      glRotatef(RotationsZ[i], 0, 0, 1);
+      if (i == 1)
+      {
+         glTranslatef(-2, 0, 0);
+         glRotatef(angulo_da_porta, 0, 1, 0); // Para fazer a animação da porta
+         glTranslatef(2, 0, 0);               // Para girar em torno do batente
+         // transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
+      }
+      glScalef(ScalesX[i], ScalesY[i], ScalesZ[i]);
+      glmDrawVBO(Models[i]);
       glPopMatrix();
    }
 
@@ -271,9 +339,9 @@ static void display(void){
    glutSolidSphere(0.75, 10, 10);
    glTranslatef(0, 1, 0);
    glutSolidSphere(0.45, 10, 10);
-   glPushMatrix(); 
+   glPushMatrix();
 
-   //Draw eyes
+   // Draw eyes
    glTranslatef(0.2, 0, 0.5);
    glColor3f(0, 0, 1);
    glutSolidSphere(0.03, 10, 10);
@@ -285,21 +353,22 @@ static void display(void){
    glColor3f(1, 0, 0);
    glutSolidCone(0.025, 0.25, 4, 4);
 
-   #if TEXTURE
+#if TEXTURE
    glPushMatrix();
    glEnable(GL_TEXTURE_2D);
    glColor3f(0.2f, 0.145f, 0.114f);
    glBindTexture(GL_TEXTURE_2D, texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   #endif
+#endif
    glutSwapBuffers();
 }
 
 /**
  * Evento de Mouse
  */
-#define SENS_ROT	5.0
-static void Mouse(int button, int state, int x, int y){
+#define SENS_ROT 5.0
+static void Mouse(int button, int state, int x, int y)
+{
    //  if (button == GLUT_LEFT_BUTTON) { //mouse - botão da esquera rotaciona o objeto
    //      if (state == GLUT_DOWN) {
    //          View.x_ini = x;
@@ -320,44 +389,47 @@ static void Mouse(int button, int state, int x, int y){
    //          View.Translating = GL_FALSE;
    //      }
    // }
-   if (button == GLUT_RIGHT_BUTTON) { //mouse - botão da direita rotaciona a camera
-        if (state == GLUT_DOWN) {
-            
-            if(!movendoCamera){
-               ultimomouseX = x;
-               ultimomouseY = y;
-               // printf("x: %d, y: %d\n", x, y);
-               // printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
-            }
-            movendoCamera = GL_TRUE;
-        } else if (state == GLUT_UP) {
-            movendoCamera = GL_FALSE;
-        }
+   if (button == GLUT_RIGHT_BUTTON)
+   { // mouse - botão da direita rotaciona a camera
+      if (state == GLUT_DOWN)
+      {
+
+         if (!movendoCamera)
+         {
+            ultimomouseX = x;
+            ultimomouseY = y;
+            // printf("x: %d, y: %d\n", x, y);
+            // printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
+         }
+         movendoCamera = GL_TRUE;
+      }
+      else if (state == GLUT_UP)
+      {
+         movendoCamera = GL_FALSE;
+      }
    }
 }
 
 void eventos()
 {
-   if(animacao_porta)
+   if (animacao_porta)
    {
-      if(porta_indo)
+      if (porta_indo)
       {
          angulo_da_porta += 1;
-
       }
       else // porta_voltando
       {
          angulo_da_porta -= 1;
-
       }
-      if(angulo_da_porta > 0 || angulo_da_porta < -90)
+      if (angulo_da_porta > 0 || angulo_da_porta < -90)
       {
          animacao_porta = GL_FALSE;
       }
    }
-   if(animacao_bola_de_neve)
+   if (animacao_bola_de_neve)
    {
-      if(animacao_bola_de_neve_estagio1)
+      if (animacao_bola_de_neve_estagio1)
       {
          vel_queda_bola_neve = 1.641861;
          PositionsX[0] += 0.269845;
@@ -368,7 +440,6 @@ void eventos()
             ScalesX[0] += 0.1;
             ScalesY[0] += 0.1;
             ScalesZ[0] += 0.1;
-
          }
          else
          {
@@ -376,28 +447,27 @@ void eventos()
             ScalesY[0] += 0.25;
             ScalesZ[0] += 0.25;
          }
-            
       }
-      if(PositionsY[0] < 61 && animacao_bola_de_neve_estagio1)
+      if (PositionsY[0] < 61 && animacao_bola_de_neve_estagio1)
       {
          animacao_bola_de_neve_estagio1 = GL_FALSE;
          animacao_bola_de_neve_estagio2 = GL_TRUE;
          vel_queda_bola_neve = -0.641861;
       }
-      if(animacao_bola_de_neve_estagio2)
+      if (animacao_bola_de_neve_estagio2)
       {
          vel_queda_bola_neve += 0.1;
          PositionsX[0] += 0.269845 * 2.1;
          PositionsY[0] -= vel_queda_bola_neve;
          PositionsZ[0] += 0.577322 * 2.1;
       }
-      if(PositionsY[0] < 15 && animacao_bola_de_neve_estagio2)
+      if (PositionsY[0] < 15 && animacao_bola_de_neve_estagio2)
       {
          vel_queda_bola_neve = 0.2;
          animacao_bola_de_neve_estagio2 = GL_FALSE;
          animacao_bola_de_neve_estagio3 = GL_TRUE;
       }
-      if(animacao_bola_de_neve_estagio3)
+      if (animacao_bola_de_neve_estagio3)
       {
          PositionsX[0] += 0.269845 * 2;
          PositionsY[0] -= 0.11;
@@ -405,9 +475,8 @@ void eventos()
          ScalesY[0] -= 0.05;
          ScalesZ[0] -= 0.05;
          PositionsZ[0] += 0.577322 * 2;
-
       }
-      if((PositionsY[0] < 0 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
+      if ((PositionsY[0] < 0 || ScalesY[0] < 0) && animacao_bola_de_neve_estagio3)
       {
          animacao_bola_de_neve = GL_FALSE;
          PositionsX[0] = -39.148174;
@@ -422,129 +491,136 @@ void eventos()
          animacao_bola_de_neve_estagio3 = GL_FALSE;
       }
    }
-   if (keys['w'] ) 
-    {
+   if (keys['w'])
+   {
       keys['W'] = false;
-      //move forward
+      // move forward
       xPosCamera = xPosCamera + 0.5 * xLookCamera;
       zPosCamera = zPosCamera + 0.5 * zLookCamera;
-    } 
-    if (keys['a']) 
-    {
+   }
+   if (keys['a'])
+   {
       keys['A'] = false;
-      //move left
+      // move left
       xPosCamera = xPosCamera + 0.5 * zLookCamera;
       zPosCamera = zPosCamera - 0.5 * xLookCamera;
-    } 
-    if (keys['s'] ) 
-    {
+   }
+   if (keys['s'])
+   {
       keys['S'] = false;
-      //move back
+      // move back
       xPosCamera = xPosCamera - 0.5 * xLookCamera;
       zPosCamera = zPosCamera - 0.5 * zLookCamera;
-    } 
-    if (keys['d'] ) 
-    {
+   }
+   if (keys['d'])
+   {
       keys['D'] = false;
-      //move right
+      // move right
       xPosCamera = xPosCamera - 0.5 * zLookCamera;
       zPosCamera = zPosCamera + 0.5 * xLookCamera;
-    }
-    if (keys['W'] ) 
-    {
+   }
+   if (keys['W'])
+   {
       keys['w'] = false;
-      //fast move forward
+      // fast move forward
       xPosCamera = xPosCamera + 2.0 * xLookCamera;
       zPosCamera = zPosCamera + 2.0 * zLookCamera;
-    } 
-    if (keys['A']) 
-    {
+   }
+   if (keys['A'])
+   {
       keys['a'] = false;
-      //fast move left
+      // fast move left
       xPosCamera = xPosCamera + 2.0 * zLookCamera;
       zPosCamera = zPosCamera - 2.0 * xLookCamera;
-    } 
-    if (keys['S'] ) 
-    {
+   }
+   if (keys['S'])
+   {
       keys['s'] = false;
-      //fast move back
+      // fast move back
       xPosCamera = xPosCamera - 2.0 * xLookCamera;
       zPosCamera = zPosCamera - 2.0 * zLookCamera;
-    } 
-    if (keys['D'] ) 
-    {
+   }
+   if (keys['D'])
+   {
       keys['d'] = false;
-      //fast move right
+      // fast move right
       xPosCamera = xPosCamera - 2.0 * zLookCamera;
       zPosCamera = zPosCamera + 2.0 * xLookCamera;
-    }
-    
-    // mover montanha
-    if(fé){
-    if (keys['i'] ) 
-    {
-      //move forward
-      PositionsX[3] = PositionsX[3] + 2 * xLookCamera;
-      PositionsZ[3] = PositionsZ[3] + 2 * zLookCamera;
-    } 
-    if (keys['j']) 
-    {
-      //move left
-      PositionsX[3] = PositionsX[3] + 2 * zLookCamera;
-      PositionsZ[3] = PositionsZ[3] - 2 * xLookCamera;
-    } 
-    if (keys['k'] ) 
-    {
-      //move back
-      PositionsX[3] = PositionsX[3] - 2 * xLookCamera;
-      PositionsZ[3] = PositionsZ[3] - 2 * zLookCamera;
-    } 
-    if (keys['l'] ) 
-    {
-      //move right
-      PositionsX[3] = PositionsX[3] - 2 * zLookCamera;
-      PositionsZ[3] = PositionsZ[3] + 2 * xLookCamera;
-    }
-    }
+   }
 
-    if (keys[' ']) {
+   // mover montanha
+   if (fé)
+   {
+      if (keys['i'])
+      {
+         // move forward
+         PositionsX[3] = PositionsX[3] + 2 * xLookCamera;
+         PositionsZ[3] = PositionsZ[3] + 2 * zLookCamera;
+      }
+      if (keys['j'])
+      {
+         // move left
+         PositionsX[3] = PositionsX[3] + 2 * zLookCamera;
+         PositionsZ[3] = PositionsZ[3] - 2 * xLookCamera;
+      }
+      if (keys['k'])
+      {
+         // move back
+         PositionsX[3] = PositionsX[3] - 2 * xLookCamera;
+         PositionsZ[3] = PositionsZ[3] - 2 * zLookCamera;
+      }
+      if (keys['l'])
+      {
+         // move right
+         PositionsX[3] = PositionsX[3] - 2 * zLookCamera;
+         PositionsZ[3] = PositionsZ[3] + 2 * xLookCamera;
+      }
+   }
+
+   if (keys[' '])
+   {
       yPosCamera = yPosCamera + 2.0;
-    } else if (keys['q'] || keys['Q']) {
-      if(keys['Q']) keys['q'] = false;
-      if(keys['q']) keys['Q'] = false;
+   }
+   else if (keys['q'] || keys['Q'])
+   {
+      if (keys['Q'])
+         keys['q'] = false;
+      if (keys['q'])
+         keys['Q'] = false;
       yPosCamera = yPosCamera - 2.0;
-    }
-    glutPostRedisplay();
+   }
+   glutPostRedisplay();
 }
 
 static void Keyboard(unsigned char key, int x, int y)
 {
-   if(last_char == 'f' && key == 'e')
+   if (last_char == 'f' && key == 'e')
    {
       fé = GL_TRUE;
    }
-   if(last_char == 'l' && key == 'u')
+   if (last_char == 'l' && key == 'u')
    {
-      GLfloat posicoesLuz[4]={PositionsX[2], PositionsY[2], PositionsZ[2], 1.0};
+      GLfloat posicoesLuz[4] = {PositionsX[2], PositionsY[2], PositionsZ[2], 1.0};
       glLightfv(GL_LIGHT0, GL_POSITION, posicoesLuz);
    }
-   if(key == 'o' || key == 'O') // debug snapshot
+   if (key == 'o' || key == 'O') // debug snapshot
    {
       printf("Debug Info:\n");
       printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
       printf("xPosCamera = %f, yPosCamera = %f, zPosCamera = %f\n", xPosCamera, yPosCamera, zPosCamera);
    }
-   if(key == 'b' || key == 'B')
+   if (key == 'b' || key == 'B')
    {
-      if(!animacao_bola_de_neve)
+      if (!animacao_bola_de_neve)
       {
-         ScalesX[0] = 1; 
-         ScalesY[0] = 1; 
-         ScalesZ[0] = 1; 
+         ScalesX[0] = 1;
+         ScalesY[0] = 1;
+         ScalesZ[0] = 1;
          animacao_bola_de_neve = GL_TRUE;
          animacao_bola_de_neve_estagio1 = GL_TRUE;
       }
-   }if(key == 'p' || key == 'P')
+   }
+   if (key == 'p' || key == 'P')
    {
       animacao_porta = GL_TRUE;
       if (porta_indo)
@@ -555,51 +631,54 @@ static void Keyboard(unsigned char key, int x, int y)
       {
          porta_indo = GL_TRUE;
       }
-
    }
    if (key < 256)
    {
-      keys[key] = true; 
+      keys[key] = true;
    }
    last_char = key;
-   //printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y); 
-   // printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
-    glutPostRedisplay();
+   // printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y);
+   //  printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
+   glutPostRedisplay();
 }
 
-void KeyboardUp(unsigned char key, int x, int y) {
-    keys[key] = false;
+void KeyboardUp(unsigned char key, int x, int y)
+{
+   keys[key] = false;
 }
 
 /**
  * Evento de movimento do mouse
  */
 
-
-static void Motion(int x, int y) {
+static void Motion(int x, int y)
+{
    int i;
-   if (View.Rotating) {
-        int deltax = View.x_ini - x;
-        int deltay = View.y_ini - y;
-		// E modifica ângulos
-		View.rotY = View.rotY_ini - deltax/SENS_ROT;
-		View.rotX = View.rotX_ini - deltay/SENS_ROT;
+   if (View.Rotating)
+   {
+      int deltax = View.x_ini - x;
+      int deltay = View.y_ini - y;
+      // E modifica ângulos
+      View.rotY = View.rotY_ini - deltax / SENS_ROT;
+      View.rotX = View.rotX_ini - deltay / SENS_ROT;
 
       glutPostRedisplay();
-   } else if (View.Translating) {
+   }
+   else if (View.Translating)
+   {
       float dz = 0.02 * (y - View.StartY);
       View.Distance = View.StartDistance + dz;
       glutPostRedisplay();
    }
-   if(movendoCamera)
+   if (movendoCamera)
    {
-      if(!ultimomouseX && !ultimomouseY)
+      if (!ultimomouseX && !ultimomouseY)
       {
          ultimomouseX = x;
          ultimomouseY = y;
       }
-      //printf("x: %d, y: %d\n", x, y);
-      //printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
+      // printf("x: %d, y: %d\n", x, y);
+      // printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
       GLdouble deltaX = -(x - ultimomouseX);
       GLdouble deltaY = (y - ultimomouseY);
       GLdouble deltaToRad = (36 * (M_PI / 180) * 0.01);
@@ -608,13 +687,13 @@ static void Motion(int x, int y) {
       zLookCamera = zLookCamera * cos(angulo_de_mudanca) - xLookCamera * sin(angulo_de_mudanca);
       xLookCamera = zLookCamera * sin(angulo_de_mudanca) + xLookCamera * cos(angulo_de_mudanca);
 
-      yLookCamera = yLookCamera * cos((deltaY * deltaToRad)) - 1 * sin((deltaY * deltaToRad)); 
-      
-      if(yLookCamera > 2)
+      yLookCamera = yLookCamera * cos((deltaY * deltaToRad)) - 1 * sin((deltaY * deltaToRad));
+
+      if (yLookCamera > 2)
       {
          yLookCamera = 2;
       }
-      if(yLookCamera < -2)
+      if (yLookCamera < -2)
       {
          yLookCamera = -2;
       }
@@ -625,36 +704,41 @@ static void Motion(int x, int y) {
    }
 }
 
-
-
-static void DoFeatureChecks(void){
-   if (!GLEW_VERSION_2_0) {
+static void DoFeatureChecks(void)
+{
+   if (!GLEW_VERSION_2_0)
+   {
       /* check for individual extensions */
-      if (!GLEW_ARB_texture_cube_map) {
+      if (!GLEW_ARB_texture_cube_map)
+      {
          printf("Sorry, GL_ARB_texture_cube_map is required.\n");
          exit(1);
       }
-      if (!GLEW_ARB_vertex_shader) {
+      if (!GLEW_ARB_vertex_shader)
+      {
          printf("Sorry, GL_ARB_vertex_shader is required.\n");
          exit(1);
       }
-      if (!GLEW_ARB_fragment_shader) {
+      if (!GLEW_ARB_fragment_shader)
+      {
          printf("Sorry, GL_ARB_fragment_shader is required.\n");
          exit(1);
       }
-      if (!GLEW_ARB_vertex_buffer_object) {
+      if (!GLEW_ARB_vertex_buffer_object)
+      {
          printf("Sorry, GL_ARB_vertex_buffer_object is required.\n");
          exit(1);
       }
    }
-   if (!ShadersSupported()) {
+   if (!ShadersSupported())
+   {
       printf("Sorry, GLSL is required\n");
       exit(1);
    }
 }
 
-
-int main(int argc, char** argv) {
+int main(int argc, char **argv)
+{
    Models = calloc(10, sizeof(GLMmodel *));
    ScalesX = calloc(10, sizeof(GLfloat));
    ScalesY = calloc(10, sizeof(GLfloat));
@@ -671,9 +755,9 @@ int main(int argc, char** argv) {
    // sudo apt-get install libsoil-dev
    // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm -lSOIL
    // ./app
-   //static char * Model_file0 = "untitled.obj";
+   // static char * Model_file0 = "untitled.obj";
 
-   //static char * Model_file2 = "bed.obj";
+   // static char * Model_file2 = "bed.obj";
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
    glutCreateWindow("Snowland");
@@ -692,55 +776,53 @@ int main(int argc, char** argv) {
 
    InitViewInfo(&View);
 
-   static char * Model_file1 = "Moon2K.obj";
-   static char * Model_file2 = "../obj-development/color-door.obj";
-   static char * Model_file3 = "../obj-development/cabana-roof-snow.obj";
-   static char * Model_file4 = "montanha.obj";
-   static char * Model_file5 = "../obj-development/base-globo.obj";
-   static char * Model_file6 = "../obj-development/chao-neve.obj";
-   static char * Model_file7 = "../obj-development/globo-black.obj";
+   static char *Model_file1 = "Moon2K.obj";
+   static char *Model_file2 = "../obj-development/color-door.obj";
+   static char *Model_file3 = "../obj-development/cabana-roof-snow.obj";
+   static char *Model_file4 = "montanha.obj";
+   static char *Model_file5 = "../obj-development/base-globo.obj";
+   static char *Model_file6 = "../obj-development/chao-neve.obj";
+   static char *Model_file7 = "../obj-development/globo-black.obj";
 
+   read_model(Model_file1,
+              -39.148174, 128.5,
+              39.043934, 0, 0, 0,
+              0, 0, 0); // BOla de neve
+   read_model(Model_file2,
+              -43, 6.6, 185,
+              0, 0, 0,
+              100, 100, 100); // PORTA
+   read_model(Model_file3,
+              -43, 12.6, 185,
+              0, 15, 0,
+              100, 100, 100); // CASA
+   read_model(Model_file4,
+              -40, 63.5, 40,
+              0, 0, 0,
+              100, 100, 100); // montanha
+   read_model(Model_file5,
+              -23, -43.5, 130,
+              0, 0, 0,
+              300, 300, 300); // Base Globo
+   read_model(Model_file6,
+              -23, 1, 130,
+              0, 0, 0,
+              235, 100, 235); // Chão neve
+   read_model(Model_file7,
+              -23, 80, 130,
+              0, 0, 0,
+              250, 250, 250); // Globo
 
-   read_model(Model_file1, 
-            -39.148174, 128.5,
-            39.043934, 0, 0, 0,
-            0, 0, 0); // BOla de neve
-   read_model(Model_file2, 
-            -43, 6.6, 185,
-            0, 0, 0,
-            100, 100, 100); // PORTA
-   read_model(Model_file3, 
-            -43, 12.6, 185, 
-            0, 15, 0,
-            100, 100, 100); // CASA
-   read_model(Model_file4,  
-            -40, 63.5, 40, 
-            0, 0, 0,
-            100, 100, 100); // montanha
-   read_model(Model_file5,  
-            -23, -43.5, 130, 
-            0, 0, 0,
-            300, 300, 300); // Base Globo
-   read_model(Model_file6,  
-            -23, 1, 130,  
-            0, 0, 0,
-            235, 100, 235); // Chão neve
-   read_model(Model_file7,  
-            -23, 80, 130,  
-            0, 0, 0,
-            250, 250, 250); // Globo
-
-   //CONSTANTES DE SINCRONIZAÇÃO:
-   // SCALE:
-   // MONTANHA: 100 CASA: 100 PORTA: 99
-   // POSICAO: MONTANHA N SEI
-   // MONTANHA: 63.5 PRA TIRAR DO CHÃO
-   // CASA: 9.6 PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
-   // PORTA: 3.6 PRA TIRAR DO CHÃO, 2 PRA ELA GIRAR NO LADO DELA
-   // EX:
-   // read_model(Model_file2, 100, 0, 3.5, 0, 0, 0, 0);
-   // read_model(Model_file3, 100, 0, 9.500000, -12, 0, 0, 0);
-
+   // CONSTANTES DE SINCRONIZAÇÃO:
+   //  SCALE:
+   //  MONTANHA: 100 CASA: 100 PORTA: 99
+   //  POSICAO: MONTANHA N SEI
+   //  MONTANHA: 63.5 PRA TIRAR DO CHÃO
+   //  CASA: 9.6 PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
+   //  PORTA: 3.6 PRA TIRAR DO CHÃO, 2 PRA ELA GIRAR NO LADO DELA
+   //  EX:
+   //  read_model(Model_file2, 100, 0, 3.5, 0, 0, 0, 0);
+   //  read_model(Model_file3, 100, 0, 9.500000, -12, 0, 0, 0);
 
    init();
 
