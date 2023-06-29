@@ -190,11 +190,7 @@ static void init(void)
    // Define a concentração do brilho
    glMateriali(GL_FRONT, GL_SHININESS, especMaterial);
 
-   // Initialize particles
-   for (loop = 0; loop < MAX_PARTICLES; loop++)
-   {
-      initParticles(loop);
-   }
+
 
 #if TEXTURE
    texture = SOIL_load_OGL_texture(
