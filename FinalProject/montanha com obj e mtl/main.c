@@ -242,7 +242,7 @@ static void display(void)
       if (i == 1)
       {
          glRotatef(RotationsY[2], 0, 1, 0); // Para rodar a porta no lugar dela
-         glTranslatef(0, 0, 12);            // Para sincronizar a porta com a casa
+         glTranslatef(0, 0, 12 * (ScalesX[2] / 100));            // Para sincronizar a porta com a casa
       }
       glRotatef(View.rotX, 1, 1, 0);
       glRotatef(View.rotY, 0, 1, 0);
@@ -251,9 +251,9 @@ static void display(void)
       glRotatef(RotationsZ[i], 0, 0, 1);
       if (i == 1)
       {
-         glTranslatef(-2, 0, 0);
+         glTranslatef(-2 * (ScalesX[1]/ 100) , 0, 0);
          glRotatef(angulo_da_porta, 0, 1, 0); // Para fazer a animação da porta
-         glTranslatef(2, 0, 0);               // Para girar em torno do batente
+         glTranslatef(2 * (ScalesX[1]/ 100), 0, 0);               // Para girar em torno do batente
          // transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
       }
       glScalef(ScalesX[i], ScalesY[i], ScalesZ[i]);
@@ -711,33 +711,34 @@ int main(int argc, char **argv)
    static char *Model_file5 = "../obj-development/base-globo.obj";
    static char *Model_file6 = "../obj-development/chao-neve.obj";
    static char *Model_file7 = "../obj-development/globo-black.obj";
-
+   GLfloat escala_casa = 120;
+   GLfloat escala_montanha = 120;
    read_model(Model_file1,
               -39.148174, 128.5,
               39.043934, 0, 0, 0,
               0, 0, 0); // BOla de neve
    read_model(Model_file2,
-              -43, 6.6, 185,
+              -30, 3 + (3.6* (escala_casa / 100)), 216,
               0, 0, 0,
-              100, 100, 100); // PORTA
+              escala_casa, escala_casa, escala_casa); // PORTA
    read_model(Model_file3,
-              -43, 12.6, 185,
-              0, 15, 0,
-              100, 100, 100); // CASA
+              -30, 3 + (9.6* (escala_casa / 100)), 216,
+              0, 90, 0,
+              escala_casa, escala_casa, escala_casa); // CASA
    read_model(Model_file4,
-              -40, 63.5, 40,
+              -40, 87, 40,
               0, 0, 0,
-              175, 175, 175); // montanha
+              230, 230, 230); // montanha
    read_model(Model_file5,
-              -23, -43.5, 130,
+              -10, -43.5, 115,
               0, 0, 0,
               300, 300, 300); // Base Globo
    read_model(Model_file6,
-              -23, 1, 130,
+              -10, 1, 115,
               0, 0, 0,
               235, 100, 235); // Chão neve
    read_model(Model_file7,
-              -23, 80, 130,
+              -10, 80, 115,
               0, 0, 0,
               250, 250, 250); // Globo
 
@@ -746,8 +747,8 @@ int main(int argc, char **argv)
    //  MONTANHA: 100 CASA: 100 PORTA: 99
    //  POSICAO: MONTANHA N SEI
    //  MONTANHA: 63.5 PRA TIRAR DO CHÃO
-   //  CASA: 9.6 PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
-   //  PORTA: 3.6 PRA TIRAR DO CHÃO, 2 PRA ELA GIRAR NO LADO DELA
+   //  CASA: 9.6 * (ScalesY/100) PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
+   //  PORTA: 3.6 * (ScalesY/100) PRA TIRAR DO CHÃO, 2 PRA ELA GIRAR NO LADO DELA
    //  EX:
    //  read_model(Model_file2, 100, 0, 3.5, 0, 0, 0, 0);
    //  read_model(Model_file3, 100, 0, 9.500000, -12, 0, 0, 0);
