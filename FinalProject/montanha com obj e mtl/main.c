@@ -573,6 +573,16 @@ void eventos()
 
 static void Keyboard(unsigned char key, int x, int y)
 {
+   if (key == 'c' || key == 'C')
+   {
+      xPosCamera = 21.061317;
+      yPosCamera = 19.000000;
+      zPosCamera = 235.098093;
+      xLookCamera = -0.857696;
+      yLookCamera = -0.233916;
+      zLookCamera = -0.485860 ;
+
+   }
    if (last_char == 'f' && key == 'e')
    {
       fe = GL_TRUE;
