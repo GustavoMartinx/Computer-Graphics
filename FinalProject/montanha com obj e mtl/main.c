@@ -28,10 +28,13 @@ static GLMmodel *Model;             /* modelo do objeto*/
 static GLfloat Scale = 4.0;			/* fator de escala */
 static GLint WinWidth = 1024, WinHeight = 768;
 GLMmodel ** Models;
-static GLfloat *PositionsX;
-static GLfloat *PositionsY;
-static GLfloat *PositionsZ;
-static GLfloat *Scales;
+GLfloat *PositionsX;
+GLfloat *PositionsY;
+GLfloat *PositionsZ;
+GLfloat *RotationsX;
+GLfloat *RotationsY;
+GLfloat *RotationsZ;
+GLfloat *Scales;
 static GLfloat LightPositionsX = 0;
 static GLfloat LightPositionsY = 10;
 static GLfloat LightPositionsZ = 100;
@@ -40,13 +43,11 @@ GLboolean animacao_bola_de_neve_estagio1 = GL_FALSE;
 GLboolean animacao_bola_de_neve_estagio2 = GL_FALSE;
 GLboolean animacao_bola_de_neve_estagio3 = GL_FALSE;
 GLfloat vel_queda_bola_neve = 1.641861;
-
 GLboolean animacao_porta = GL_FALSE;
-GLboolean porta_indo = GL_FALSE;
-GLboolean porta_voltando = GL_FALSE;
-GLfloat angulo_da_porta = 90;
-
-
+GLboolean porta_indo = GL_TRUE;
+GLfloat angulo_da_porta = 0;
+unsigned char last_char = ' ';
+GLboolean fé = GL_FALSE;
 
 int n_models = 0;
 
@@ -75,7 +76,9 @@ static void InitViewInfo(ViewInfo *view){
    view->StartDistance = 0.0;
 }
 
-static void read_model(char *Model_file, GLfloat Scale, GLfloat PosX, GLfloat PosY, GLfloat PosZ) {
+static void read_model(char *Model_file, GLfloat Scale,
+                      GLfloat PosX, GLfloat PosY, GLfloat PosZ,
+                     GLfloat RotX, GLfloat RotY, GLfloat RotZ) {
    float objScale;
 
    /* lendo o modelo */
@@ -85,6 +88,9 @@ static void read_model(char *Model_file, GLfloat Scale, GLfloat PosX, GLfloat Po
    PositionsX[n_models] = PosX;
    PositionsY[n_models] = PosY;
    PositionsZ[n_models] = PosZ;
+   RotationsX[n_models] = RotX;
+   RotationsY[n_models] = RotY;
+   RotationsZ[n_models] = RotZ;
    glmFacetNormals(Models[n_models]);
    if (Models[n_models]->numnormals == 0) {
       GLfloat smoothing_angle = 90.0;
@@ -115,7 +121,7 @@ static void init(void){
 	glLightfv(GL_LIGHT0, GL_SPECULAR, luzEspecular);
    GLfloat ambientColor[] = { 0.1f, 0.1f, 0.1f, 0.0f };
    glLightModelfv(GL_LIGHT_MODEL_AMBIENT, ambientColor); 
-   glShadeModel(GL_FLAT);
+   glShadeModel(GL_SMOOTH);
 
    GLint especMaterial =80;
 	// Define a concentração do brilho
@@ -160,16 +166,19 @@ static void display(void){
    for(int i = 0; i < n_models; i++)
    {
       glPushMatrix();
+         glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+         glRotatef(View.rotX,1,1,0);
+	      glRotatef(View.rotY,0,1,0);
+         glRotatef(RotationsX[i],1,0,0);
+         glRotatef(RotationsY[i],0,1,0);
+         glRotatef(RotationsZ[i],0,0,1);
          if(i == 1)
          {
-            //glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
-            //glRotatef(angulo_da_porta,1,0,0);   
-            //glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+            glTranslatef(-2, 0, 0);
+            glRotatef(angulo_da_porta,0,1,0);   
+            glTranslatef(2, 0, 0);
             //transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
          }
-         glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
-         glRotatef(View.rotX,1,0,0);
-	      glRotatef(View.rotY,0,1,0);
          glScalef(Scales[i], Scales[i], Scales[i]);
          glmDrawVBO(Models[i]);
       glPopMatrix();
@@ -205,26 +214,26 @@ static void display(void){
  */
 #define SENS_ROT	5.0
 static void Mouse(int button, int state, int x, int y){
-    if (button == GLUT_LEFT_BUTTON) { //mouse - botão da esquera rotaciona o objeto
-        if (state == GLUT_DOWN) {
-            View.x_ini = x;
-            View.y_ini = y;
-            View.rotX_ini = View.rotX;
-            View.rotY_ini = View.rotY;
-            View.Rotating = GL_TRUE;
-        } else if (state == GLUT_UP) {
-            View.Rotating = GL_FALSE;
-        }
-    } else if (button == GLUT_MIDDLE_BUTTON) {  //mouse - botão do meio aproxima ou afasta o objeto (translação)
-        if (state == GLUT_DOWN) {
-            View.StartX = x;
-            View.StartY = y;
-            View.StartDistance = View.Distance;
-            View.Translating = GL_TRUE;
-        } else if (state == GLUT_UP) {
-            View.Translating = GL_FALSE;
-        }
-   }
+   //  if (button == GLUT_LEFT_BUTTON) { //mouse - botão da esquera rotaciona o objeto
+   //      if (state == GLUT_DOWN) {
+   //          View.x_ini = x;
+   //          View.y_ini = y;
+   //          View.rotX_ini = View.rotX;
+   //          View.rotY_ini = View.rotY;
+   //          View.Rotating = GL_TRUE;s
+   //      } else if (state == GLUT_UP) {
+   //          View.Rotating = GL_FALSE;
+   //      }
+   //  } else if (button == GLUT_MIDDLE_BUTTON) {  //mouse - botão do meio aproxima ou afasta o objeto (translação)
+   //      if (state == GLUT_DOWN) {
+   //          View.StartX = x;
+   //          View.StartY = y;
+   //          View.StartDistance = View.Distance;
+   //          View.Translating = GL_TRUE;
+   //      } else if (state == GLUT_UP) {
+   //          View.Translating = GL_FALSE;
+   //      }
+   // }
    if (button == GLUT_RIGHT_BUTTON) { //mouse - botão da direita rotaciona a camera
         if (state == GLUT_DOWN) {
             
@@ -243,6 +252,23 @@ static void Mouse(int button, int state, int x, int y){
 
 void eventos()
 {
+   if(animacao_porta)
+   {
+      if(porta_indo)
+      {
+         angulo_da_porta += 1;
+
+      }
+      else // porta_voltando
+      {
+         angulo_da_porta -= 1;
+
+      }
+      if(angulo_da_porta > 0 || angulo_da_porta < -90)
+      {
+         animacao_porta = GL_FALSE;
+      }
+   }
    if(animacao_bola_de_neve)
    {
       if(animacao_bola_de_neve_estagio1)
@@ -324,29 +350,31 @@ void eventos()
     }
     
     // mover montanha
+    if(fé){
     if (keys['i'] ) 
     {
       //move forward
-      PositionsX[0] = PositionsX[0] + 2 * xLookCamera;
-      PositionsZ[0] = PositionsZ[0] + 2 * zLookCamera;
+      PositionsX[3] = PositionsX[3] + 2 * xLookCamera;
+      PositionsZ[3] = PositionsZ[3] + 2 * zLookCamera;
     } 
     if (keys['j']|| keys['J']) 
     {
       //move left
-      PositionsX[0] = PositionsX[0] + 2 * zLookCamera;
-      PositionsZ[0] = PositionsZ[0] - 2 * xLookCamera;
+      PositionsX[3] = PositionsX[3] + 2 * zLookCamera;
+      PositionsZ[3] = PositionsZ[3] - 2 * xLookCamera;
     } 
     if (keys['k'] ) 
     {
       //move back
-      PositionsX[0] = PositionsX[0] - 2 * xLookCamera;
-      PositionsZ[0] = PositionsZ[0] - 2 * zLookCamera;
+      PositionsX[3] = PositionsX[3] - 2 * xLookCamera;
+      PositionsZ[3] = PositionsZ[3] - 2 * zLookCamera;
     } 
     if (keys['l'] ) 
     {
       //move right
-      PositionsX[0] = PositionsX[0] - 2 * zLookCamera;
-      PositionsZ[0] = PositionsZ[0] + 2 * xLookCamera;
+      PositionsX[3] = PositionsX[3] - 2 * zLookCamera;
+      PositionsZ[3] = PositionsZ[3] + 2 * xLookCamera;
+    }
     }
 
     if (keys[' ']) {
@@ -359,7 +387,11 @@ void eventos()
 
 static void Keyboard(unsigned char key, int x, int y)
 {
-   if(key == 'p' || key == 'P') // debug snapshot
+   if(last_char == 'f' && key == 'e')
+   {
+      fé = GL_TRUE;
+   }
+   if(key == 'o' || key == 'O') // debug snapshot
    {
       printf("Debug Info:\n");
       printf("xLookCamera: %f,yLookCamera: %f,zLookCamera: %f\n", xLookCamera, yLookCamera, zLookCamera);
@@ -373,17 +405,15 @@ static void Keyboard(unsigned char key, int x, int y)
          animacao_bola_de_neve = GL_TRUE;
          animacao_bola_de_neve_estagio1 = GL_TRUE;
       }
-   }if(key == 'o' || key == 'O')
+   }if(key == 'p' || key == 'P')
    {
       animacao_porta = GL_TRUE;
       if (porta_indo)
       {
          porta_indo = GL_FALSE;
-         porta_voltando = GL_TRUE;
       }
       else
       {
-         porta_voltando = GL_FALSE;
          porta_indo = GL_TRUE;
       }
 
@@ -392,6 +422,7 @@ static void Keyboard(unsigned char key, int x, int y)
    {
       keys[key] = true; 
    }
+   last_char = key;
    //printf("key: %c, mouseX:%d, mouseY:%d\n", key, x, y); 
    // printf("xLookCamera = %f, zLookCamera = %f, maior = %c\n", xLookCamera, zLookCamera, maior);
     glutPostRedisplay();
@@ -490,6 +521,9 @@ int main(int argc, char** argv) {
    PositionsX = calloc(10, sizeof(GLfloat));
    PositionsY = calloc(10, sizeof(GLfloat));
    PositionsZ = calloc(10, sizeof(GLfloat));
+   RotationsX = calloc(10, sizeof(GLfloat));
+   RotationsY = calloc(10, sizeof(GLfloat));
+   RotationsZ = calloc(10, sizeof(GLfloat));
    glutInit(&argc, argv);
    glutInitWindowSize(WinWidth, WinHeight);
 
@@ -497,10 +531,7 @@ int main(int argc, char** argv) {
    // gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm -lSOIL
    // ./app
    //static char * Model_file0 = "untitled.obj";
-   static char * Model_file1 = "Moon2K.obj";
-   static char * Model_file2 = "../obj-development/color-door.obj";
-   static char * Model_file3 = "../obj-development/cabana-roof-snow.obj";
-   static char * Model_file4 = "montanha.obj";
+
    //static char * Model_file2 = "bed.obj";
 
    glutInitDisplayMode(GLUT_RGB | GLUT_DEPTH | GLUT_DOUBLE);
@@ -520,17 +551,27 @@ int main(int argc, char** argv) {
 
    InitViewInfo(&View);
 
-   //read_model(Model_file0, 1, 0, 0, 0);
-   read_model(Model_file1, 0, -39.148174, 128.5, 39.043934);
-   read_model(Model_file2, 100, 0, 3.5, 0);
-   read_model(Model_file3, 100, 0, 9.500000, -12);
-   read_model(Model_file4, 100, -40, 63.5, 40);
+   static char * Model_file1 = "Moon2K.obj";
+   static char * Model_file2 = "../obj-development/color-door.obj";
+   static char * Model_file3 = "../obj-development/cabana-roof-snow.obj";
+   static char * Model_file4 = "montanha.obj";
+
+   read_model(Model_file1, 0, -39.148174, 128.5, 39.043934, 0, 0, 0);
+   read_model(Model_file2, 100, -43, 3.6, 185, 0, 0, 0); // PORTA
+   read_model(Model_file3, 100, -43, 9.6, 185-12, 0, 0, 0); // CASA
+   read_model(Model_file4, 100, -40, 63.5, 40, 0, 0, 0);
+
    //CONSTANTES DE SINCRONIZAÇÃO:
    // SCALE:
    // MONTANHA: 100 CASA: 100 PORTA: 99
    // POSICAO: MONTANHA N SEI
-   // CASA: 9.5 PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
-   // PORTA: 3.5 PRA TIRAR DO CHÃO, TEM QUE VER O TAMANHO PRA RODAR ELA E ABRIR
+   // MONTANHA: 63.5 PRA TIRAR DO CHÃO
+   // CASA: 9.6 PRA TIRAR DO CHAO, -12 A MAIS QUE A PORTA PRA ENCAIXAR
+   // PORTA: 3.6 PRA TIRAR DO CHÃO, 2 PRA ELA GIRAR NO LADO DELA
+   // EX:
+   // read_model(Model_file2, 100, 0, 3.5, 0, 0, 0, 0);
+   // read_model(Model_file3, 100, 0, 9.500000, -12, 0, 0, 0);
+
 
    init();
 
