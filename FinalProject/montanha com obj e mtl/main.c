@@ -583,6 +583,15 @@ static void Keyboard(unsigned char key, int x, int y)
       zLookCamera = -0.485860 ;
 
    }
+   if(key == 'U' || key == 'u')
+   {
+      xPosCamera = 408;
+      yPosCamera = 283;
+      zPosCamera = 377;
+      xLookCamera = -0.867427;
+      yLookCamera = -0.479646;
+      zLookCamera = -0.481203 ;
+   }
    if (last_char == 'f' && key == 'e')
    {
       fe = GL_TRUE;
