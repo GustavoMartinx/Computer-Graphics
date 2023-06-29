@@ -18,7 +18,7 @@ Observações:
 #include "glm.h"
 #include "util/trackball.h"
 #include "util/shaderutil.h"
-#include <SOIL/SOIL.h>
+// #include <SOIL/SOIL.h>
 bool keys[256];
 
 GLuint texture;
@@ -51,7 +51,7 @@ GLboolean fé = GL_FALSE;
 
 int n_models = 0;
 
-GLdouble xPosCamera = 0, yPosCamera = 0, zPosCamera = 5;
+GLdouble xPosCamera = -41, yPosCamera = 5, zPosCamera = 214;
 volatile GLdouble xLookCamera = 0, yLookCamera= 0, zLookCamera = -1;
 GLdouble xUpCamera = 0, yUpCamera = 1, zUpCamera = 0;
 int ultimomouseX, ultimomouseY = 0;
@@ -125,18 +125,18 @@ static void init(void){
 
    GLint especMaterial =80;
 	// Define a concentração do brilho
-	glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
+	// glMateriali(GL_FRONT,GL_SHININESS,especMaterial);
 
-   texture = SOIL_load_OGL_texture(
-       "Textures/grass.jpg",
-       SOIL_LOAD_AUTO,
-       SOIL_CREATE_NEW_ID,
-       SOIL_FLAG_TEXTURE_REPEATS);
+   // texture = SOIL_load_OGL_texture(
+   //     "Textures/grass.jpg",
+   //     SOIL_LOAD_AUTO,
+   //     SOIL_CREATE_NEW_ID,
+   //     SOIL_FLAG_TEXTURE_REPEATS);
 
-   if (texture == 0)
-   {
-      printf("\nERRO\n");
-   }
+   // if (texture == 0)
+   // {
+   //    printf("\nERRO\n");
+   // }
 }
 
 
@@ -167,6 +167,11 @@ static void display(void){
    {
       glPushMatrix();
          glTranslatef(PositionsX[i], PositionsY[i], PositionsZ[i]);
+         if(i == 1)
+         {
+            glRotatef(RotationsY[2],0,1,0); // Para rodar a porta no lugar dela
+            glTranslatef(0, 0, 12); // Para sincronizar a porta com a casa
+         }
          glRotatef(View.rotX,1,1,0);
 	      glRotatef(View.rotY,0,1,0);
          glRotatef(RotationsX[i],1,0,0);
@@ -175,8 +180,8 @@ static void display(void){
          if(i == 1)
          {
             glTranslatef(-2, 0, 0);
-            glRotatef(angulo_da_porta,0,1,0);   
-            glTranslatef(2, 0, 0);
+            glRotatef(angulo_da_porta,0,1,0); // Para fazer a animação da porta
+            glTranslatef(2, 0, 0); //Para girar em torno do batente
             //transladar a porta pra ficar no eixo do lado/ rodar e transladar de novo
          }
          glScalef(Scales[i], Scales[i], Scales[i]);
@@ -558,7 +563,7 @@ int main(int argc, char** argv) {
 
    read_model(Model_file1, 0, -39.148174, 128.5, 39.043934, 0, 0, 0);
    read_model(Model_file2, 100, -43, 3.6, 185, 0, 0, 0); // PORTA
-   read_model(Model_file3, 100, -43, 9.6, 185-12, 0, 0, 0); // CASA
+   read_model(Model_file3, 100, -43, 9.6, 185, 0, 75, 0); // CASA
    read_model(Model_file4, 100, -40, 63.5, 40, 0, 0, 0);
 
    //CONSTANTES DE SINCRONIZAÇÃO:
