@@ -16,36 +16,44 @@ Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API grá
 
 <br>
 
-### :evergreen_tree: Como executar
+## :evergreen_tree: Como executar
 
-```bash
-# Clone este repositório
-$ git clone https://github.com/jhonatancunha/fat32_file_system
+1. Clone este repositório
+    ```bash
+    git clone https://github.com/GustavoMartinx/Computer-Graphics.git
+    ```
 
-# Acesse o diretório "montanha com obj e mtl" e execute este comando para compilar o código-fonte em C
-gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm
+2. Acesse o diretório ``montanha com obj e mtl`` e execute este comando para compilar o código-fonte em ``C``
+    ```ps
+    gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm
+    ```
 
-# Por fim inicie o executável
-./app
-```
-
+3. Por fim inicie o executável
+    ```bash
+    ./app
+    ```
 
 ## :snowflake: Funcionalidades
 
 #### Controle da câmera
 - `w` `a` `s` `d` movimentam a câmera nos eixos X e Z;
-- `q` `[space]` movimentam a câmera no eixo Y;
+- `[espaço]` e `q` movimentam a câmera no eixo Y;
 - com `CapsLock` ativo, as telas acima exercem as mesmas funções, porém com maior velocidade;
 - com o `mouse` é possível controlar a direção na qual a câmera aponta;
+- `c` move a câmera para uma posição pré configurada próxima à cabana;
+- `u` move a câmera para a posição padrão de visão.
 
-#### Animações
+#### Animações Geométricas
 - `p` abre e fecha a porta da cabana;
-- `b` cria uma bola de neve e a faz rolar montanha a baixo;
+- `b` cria uma bola de neve e a faz cair montanha a baixo;
 - quando tens `fe`, moves montanhas com `i` `j` `k` `l`;
-- `lu` ativa as configurações de iluminação;
+- `lu` ativa as configurações de iluminação.
 
+<!-- <br>
 
+## :mount_fuji: Objetos 3D Criados -->
 
+<br>
 
 ### :snowman: Autores
 
