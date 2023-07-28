@@ -49,11 +49,19 @@ Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API grá
 - quando tens `fe`, moves montanhas com `i` `j` `k` `l`;
 - `lu` ativa as configurações de iluminação.
 
-<!-- <br>
-
-## :mount_fuji: Objetos 3D Criados -->
-
 <br>
+
+## :mount_fuji: Preview dos Objetos 3D Criados
+![](img/v2/snowland.png)
+![](img/v2/cabin.png)
+![](img/v2/snowland-green.png)
+![](img/v2/snowland-green-night.png)
+![](img/v2/snowland-viewup.png)
+![](img/v2/pine-trees.png)
+![](img/v2/axe-wood-cut.png)
+![](img/v2/campfire.png)
+![](img/v2/snowland-night.png)
+
 
 ### :snowman: Autores
 
