@@ -4,16 +4,6 @@ Intitulamos 'Snowland' o nosso Projeto Final da disciplina de Computação Gráf
 Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API gráfica OpenGL e para criar os objetos 3D foi utilizado o software Blender na versão 3.5 LTS.
 </p>
 
-<!-- <p align="center">
-<img src="https://img.shields.io/tokei/lines/github/jhonatancunha/fat32_file_system?style=for-the-badge" alt="">
-<img src="https://img.shields.io/github/license/jhonatancunha/fat32_file_system?color=blue&style=for-the-badge" alt="">
-<img src="https://img.shields.io/github/last-commit/jhonatancunha/fat32_file_system?color=blue&style=for-the-badge" alt="">
-</p>
-:cloud:
-<br> -->
-
-
-
 <br>
 
 ## :evergreen_tree: Como executar
@@ -23,15 +13,21 @@ Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API grá
     git clone https://github.com/GustavoMartinx/Computer-Graphics.git
     ```
 
-2. Acesse o diretório ``montanha com obj e mtl`` e execute este comando para compilar o código-fonte em ``C``
-    ```ps
-    gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm
+2. Acesse o diretório ``montanha com obj e mtl`` 
+    ```bash
+    cd 'montanha com obj e mtl'
     ```
 
-3. Por fim inicie o executável
+3. Instale as bibliotecas necessárias
     ```bash
-    ./app
+    sudo apt-get install libglew-dev libsoil-dev
     ```
+
+4. Compile o código-fonte em ``C`` e execute
+    ```bash
+    gcc -o app main.c glm.c glmdraw.c util/readtex.c util/shaderutil.c util/trackball.c -lGLU -lGL -lglut -lGLEW -lm -lSOIL && ./app
+    ```
+
 
 ## :snowflake: Funcionalidades
 
@@ -39,15 +35,17 @@ Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API grá
 - `w` `a` `s` `d` movimentam a câmera nos eixos X e Z;
 - `[espaço]` e `q` movimentam a câmera no eixo Y;
 - com `CapsLock` ativo, as telas acima exercem as mesmas funções, porém com maior velocidade;
-- com o `mouse` é possível controlar a direção na qual a câmera aponta;
+- com o `mouseRight` é possível controlar a direção na qual a câmera aponta;
 - `c` move a câmera para uma posição pré configurada próxima à cabana;
 - `u` move a câmera para a posição padrão de visão.
+- `o` Debug snapshot: Fornece as coordenadas da posição da câmera e sua direção de visão.
 
 #### Animações Geométricas
 - `p` abre e fecha a porta da cabana;
 - `b` cria uma bola de neve e a faz cair montanha a baixo;
 - quando tens `fe`, moves montanhas com `i` `j` `k` `l`;
-- `lu` ativa as configurações de iluminação.
+- `lu` ativa as configurações de iluminação;
+- neva continuamente através de um sistema de partículas.
 
 <br>
 
@@ -62,8 +60,15 @@ Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API grá
 ![](img/v2/campfire.png)
 ![](img/v2/snowland-night.png)
 
+## :sweat_drops: Preview no OpenGL
+<!-- ![Door Animation](img/v2/videos/door-fixed.gif) -->
+![Snow Ball](img/v2/videos/snow-ball.gif)
+![Snow Ball](img/v2/videos/snow-ball2.gif)
+![Fé](img/v2/videos/fe.gif)
+![Snow Particles System](img/v2/videos/snow.gif)
 
-### :snowman: Autores
+
+## :snowman: Autores
 
 <table style="flex-wrap: wrap; display: flex; align-items: center;  flex-direction: column;" ><tr>
 
@@ -90,5 +95,5 @@ Para tanto, foi utilizada a Linguagem de Programação C em conjunto à API grá
  </a> <a href="https://github.com/RenanGAS" title="Repositorio Renan Sakashita"></a>
 
 </td>
-
+  
 </tr></table>
